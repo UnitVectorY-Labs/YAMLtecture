@@ -1,0 +1,25 @@
+architecture:
+  nodes:
+    - id: cluster
+      type: Infrastructure
+      attributes:
+        name: "Container Hosting"
+    - id: service_foo
+      type: Microservice
+      parent: cluster
+      attributes:
+        name: "Foo Service"
+        language: "Java"
+    - id: service_bar
+      type: Microservice
+      parent: cluster
+      attributes:
+        name: "Bar Service"
+        language: "Go"
+
+  relationships:
+    - source: service_foo
+      target: service_bar
+      type: "API"
+      attributes:
+        payload: "example"
