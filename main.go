@@ -7,10 +7,12 @@ import (
 
 	"YAMLtecture/internal/configuration"
 	"YAMLtecture/internal/mermaid"
+	"YAMLtecture/internal/query"
 	"YAMLtecture/internal/validate"
 )
 
 var (
+	queryFlag    = flag.String("query", "", "Query file to load")
 	validateFlag = flag.Bool("validate", false, "Validate the YAML architecture files")
 	graphFlag    = flag.Bool("graph", false, "Generate a Mermaid diagram from the YAML architecture files")
 	debugFlag    = flag.Bool("debug", false, "Enable debug output")
@@ -51,6 +53,29 @@ func main() {
 		fmt.Println("Validation passed.")
 	}
 
+	// If the queryFlag is set load in the query file
+	if *queryFlag != "" {
+		configQuery, err := query.LoadQuery(*queryFlag)
+		if err != nil {
+			fmt.Printf("Error loading query: %v\n", err)
+			os.Exit(1)
+		}
+
+		// Now overwrite the config by applying the query
+		// Apply the query
+		configNew, err := query.ApplyQuery(configQuery, config)
+		if err != nil {
+			fmt.Printf("Error applying query: %v\n", err)
+			os.Exit(1)
+		}
+
+		config = &configNew
+
+		if *debugFlag {
+			fmt.Println("Query applied successfully.")
+		}
+	}
+
 	if *graphFlag {
 		// Generate Mermaid diagram
 		mermaid, err := mermaid.GenerateMermaid(config)
@@ -59,5 +84,8 @@ func main() {
 			os.Exit(1)
 		}
 		fmt.Println(mermaid)
+	} else {
+		// Print the final configuration
+		fmt.Print(config.YamlString())
 	}
 }

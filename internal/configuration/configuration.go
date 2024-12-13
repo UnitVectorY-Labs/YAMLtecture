@@ -39,6 +39,17 @@ type Config struct {
 	Relationships []Relationship
 }
 
+// Print out the configuration method for the Config struct as the YAML
+// representation of the architecture.
+func (c *Config) YamlString() string {
+	// Marshall the config to a string
+	data, err := yaml.Marshal(c)
+	if err != nil {
+		return fmt.Sprintf("error marshalling config: %v", err)
+	}
+	return string(data)
+}
+
 // LoadYAMLFiles loads and parses YAML configuration files from the specified directory.
 func LoadYAMLFiles(dir string) (*Config, error) {
 	config := &Config{
