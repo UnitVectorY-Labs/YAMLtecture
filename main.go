@@ -8,7 +8,6 @@ import (
 	"YAMLtecture/internal/configuration"
 	"YAMLtecture/internal/mermaid"
 	"YAMLtecture/internal/query"
-	"YAMLtecture/internal/validate"
 )
 
 var (
@@ -16,7 +15,7 @@ var (
 	validateFlag = flag.Bool("validate", false, "Validate the YAML architecture files")
 	graphFlag    = flag.Bool("graph", false, "Generate a Mermaid diagram from the YAML architecture files")
 	debugFlag    = flag.Bool("debug", false, "Enable debug output")
-	dirFlag      = flag.String("dir", ".", "Directory containing YAML configuration files")
+	fileFlag     = flag.String("file", ".", "File path to a configuration file")
 )
 
 func main() {
@@ -29,15 +28,15 @@ func main() {
 		os.Exit(1)
 	}
 
-	// Load and parse YAML files
-	config, err := configuration.LoadYAMLFiles(*dirFlag)
+	// Load and parse YAML file
+	config, err := configuration.LoadConfig(*fileFlag)
 	if err != nil {
-		fmt.Printf("Error loading YAML files: %v\n", err)
+		fmt.Printf("Error loading YAML file: %v\n", err)
 		os.Exit(1)
 	}
 
 	// Perform validation
-	err = validate.ValidateConfig(config)
+	err = config.Validate()
 	if err != nil {
 		fmt.Printf("Validation failed: %v\n", err)
 		os.Exit(1)

@@ -9,24 +9,26 @@ import (
 
 func TestGenerateMermaid(t *testing.T) {
 	tests := []struct {
-		name       string
-		configPath string
+		name        string
+		configPath  string
+		mermaidPath string
 	}{
 		{
-			name:       "Single relationship",
-			configPath: "../../example/simple/",
+			name:        "Single link",
+			configPath:  "../../example/simple/architecture.yaml",
+			mermaidPath: "../../example/simple/mermaid.mmd",
 		},
 		// ...add more test cases...
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			config, err := configuration.LoadYAMLFiles(tt.configPath)
+			config, err := configuration.LoadConfig(tt.configPath)
 			if err != nil {
 				t.Fatalf("Failed to load config: %v", err)
 			}
 
-			expectedBytes, err := os.ReadFile(tt.configPath + "mermaid.mmd")
+			expectedBytes, err := os.ReadFile(tt.mermaidPath)
 			if err != nil {
 				t.Fatalf("Failed to read Mermaid file: %v", err)
 			}

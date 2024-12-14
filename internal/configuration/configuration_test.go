@@ -5,7 +5,7 @@ import (
 )
 
 func TestLoadYAMLFiles(t *testing.T) {
-	config, err := LoadYAMLFiles("../../example/simple/")
+	config, err := LoadConfig("../../example/simple/architecture.yaml")
 	if err != nil {
 		t.Fatalf("Failed to load YAML files: %v", err)
 	}
@@ -60,8 +60,8 @@ func TestLoadYAMLFiles(t *testing.T) {
 		}
 	}
 
-	// Assert relationships are loaded correctly
-	expectedRelationships := []Relationship{
+	// Assert links are loaded correctly
+	expectedLinks := []Link{
 		{
 			Source: "service_foo",
 			Target: "service_bar",
@@ -71,17 +71,17 @@ func TestLoadYAMLFiles(t *testing.T) {
 			},
 		},
 	}
-	if len(config.Relationships) != len(expectedRelationships) {
-		t.Errorf("Expected %d relationships, got %d", len(expectedRelationships), len(config.Relationships))
+	if len(config.Links) != len(expectedLinks) {
+		t.Errorf("Expected %d links, got %d", len(expectedLinks), len(config.Links))
 	}
-	for i, expected := range expectedRelationships {
-		actual := config.Relationships[i]
+	for i, expected := range expectedLinks {
+		actual := config.Links[i]
 		if actual.Source != expected.Source || actual.Target != expected.Target || actual.Type != expected.Type {
-			t.Errorf("Expected relationship %v, got %v", expected, actual)
+			t.Errorf("Expected link %v, got %v", expected, actual)
 		}
 		for key, val := range expected.Attributes {
 			if actual.Attributes[key] != val {
-				t.Errorf("Expected relationship attribute '%s'='%v', got '%v'", key, val, actual.Attributes[key])
+				t.Errorf("Expected link attribute '%s'='%v', got '%v'", key, val, actual.Attributes[key])
 			}
 		}
 	}

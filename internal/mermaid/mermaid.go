@@ -7,7 +7,7 @@ import (
 	"YAMLtecture/internal/configuration"
 )
 
-// GenerateMermaid creates a Mermaid diagram based on the relationships and includes all nodes.
+// GenerateMermaid creates a Mermaid diagram based on the links and includes all nodes.
 func GenerateMermaid(config *configuration.Config) (string, error) {
 	var sb strings.Builder
 	sb.WriteString("flowchart TD\n")
@@ -20,8 +20,8 @@ func GenerateMermaid(config *configuration.Config) (string, error) {
 		sb.WriteString(line)
 	}
 
-	// Add all of the relationships
-	for _, rel := range config.Relationships {
+	// Add all of the links
+	for _, rel := range config.Links {
 		source := rel.Source
 		target := rel.Target
 		label := rel.Type
