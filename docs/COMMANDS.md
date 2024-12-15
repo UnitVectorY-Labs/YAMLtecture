@@ -55,9 +55,9 @@ Note that the `--in=<filePath>` flag is not applicable for this command given it
 
 The output of this command will be the result of the query which is the config YAML that is output to STDOUT or if `--out=<filePath>` is specified then the output will be written to the specified file.
 
-## Render Mermaid
+## Generate Mermaid
 
-The render mermaid command, `--graphConfig`, takes in a configuration file and renders the configuration as a mermaid diagram.
+The generate mermaid command, `--generateMermaid`, takes in a configuration file and renders the configuration as a mermaid flowchart.
 
 Since this takes in multiple inputs the configuration file can be specified in the following order of precedence:
 

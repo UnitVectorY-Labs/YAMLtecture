@@ -11,31 +11,30 @@ YAMLtecture is an open-source CLI tool designed for application architects who n
 At the core of YAMLtecture are YAML configuration files that define your system architecture. These files are split into two main sections: nodes and links. The nodes section describes the individual components of your system, while the links section defines how those components interact.
 
 ```yaml
-architecture:
-  nodes:
-    - id: cluster
-      type: Infrastructure
-      attributes:
-        name: "Container Hosting"
-    - id: service_foo
-      type: Microservice
-      parent: cluster
-      attributes:
-        name: "Foo Service"
-        language: "Java"
-    - id: service_bar
-      type: Microservice
-      parent: cluster
-      attributes:
-        name: "Bar Service"
-        language: "Go"
+nodes:
+  - id: cluster
+    type: Infrastructure
+    attributes:
+      name: "Container Hosting"
+  - id: service_foo
+    type: Microservice
+    parent: cluster
+    attributes:
+      name: "Foo Service"
+      language: "Java"
+  - id: service_bar
+    type: Microservice
+    parent: cluster
+    attributes:
+      name: "Bar Service"
+      language: "Go"
 
-  links:
-    - source: service_foo
-      target: service_bar
-      type: "API"
-      attributes:
-        payload: "example"
+links:
+  - source: service_foo
+    target: service_bar
+    type: "API"
+    attributes:
+      payload: "example"
 ```
 
 The key concept here is that each node has a unique `id`. The `type` field is flexible and can be set to whatever suits your architecture—common examples include Microservice, Database, Queue, etc. The `parent` field is optional and defines hierarchical links between nodes. These links are validated to form an acyclic tree, but not every node needs to be part of the same hierarchy.

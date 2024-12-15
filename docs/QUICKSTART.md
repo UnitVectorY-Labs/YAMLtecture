@@ -8,7 +8,7 @@ go build
 
 ## Run Tests
 
-```
+```bash
 go test ./...
 ```
 

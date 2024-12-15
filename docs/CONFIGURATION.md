@@ -11,3 +11,32 @@ A node is uniquely identified by its `id`.  Within a given YAMLtecure scope, the
 Each node and link have a required `type` attribute.  The `type` attribute is used to define the type of the node or link.
 
 Both nodes and links can have optional attributes.  The attributes are used to provide additional metadata about the node or link as key value pairs.
+
+## Example Configuration
+
+```yaml
+nodes:
+  - id: cluster
+    type: Infrastructure
+    attributes:
+      name: "Container Hosting"
+  - id: service_foo
+    type: Microservice
+    parent: cluster
+    attributes:
+      name: "Foo Service"
+      language: "Java"
+  - id: service_bar
+    type: Microservice
+    parent: cluster
+    attributes:
+      name: "Bar Service"
+      language: "Go"
+
+links:
+  - source: service_foo
+    target: service_bar
+    type: "API"
+    attributes:
+      payload: "example"
+```
