@@ -10,10 +10,10 @@ import (
 func (config *Config) Validate() error {
 
 	// Validate nodes
-	for id, node := range config.Nodes {
+	for _, node := range config.Nodes {
 		err := node.validate()
 		if err != nil {
-			return fmt.Errorf("node '%s' is invalid: %w", id, err)
+			return fmt.Errorf("node '%s' is invalid: %w", node.ID, err)
 		}
 	}
 
@@ -27,12 +27,19 @@ func (config *Config) Validate() error {
 
 	// Validate parent links (acyclic)
 	parentMap := make(map[string]string)
-	for id, node := range config.Nodes {
+	for _, node := range config.Nodes {
 		if node.Parent != "" {
-			parentMap[id] = node.Parent
+			parentMap[node.ID] = node.Parent
 			// Check if parent exists
-			if _, exists := config.Nodes[node.Parent]; !exists {
-				return fmt.Errorf("node '%s' has non-existent parent '%s'", id, node.Parent)
+			parentExists := false
+			for _, n := range config.Nodes {
+				if n.ID == node.Parent {
+					parentExists = true
+					break
+				}
+			}
+			if !parentExists {
+				return fmt.Errorf("node '%s' has non-existent parent '%s'", node.ID, node.Parent)
 			}
 		}
 	}
@@ -41,20 +48,33 @@ func (config *Config) Validate() error {
 	visited := make(map[string]bool)
 	recStack := make(map[string]bool)
 
-	for id := range config.Nodes {
-		if !visited[id] {
-			if isCyclic(id, parentMap, visited, recStack) {
-				return fmt.Errorf("cycle detected in parent links involving node '%s'", id)
+	for _, node := range config.Nodes {
+		if !visited[node.ID] {
+			if isCyclic(node.ID, parentMap, visited, recStack) {
+				return fmt.Errorf("cycle detected in parent links involving node '%s'", node.ID)
 			}
 		}
 	}
 
 	// Validate links
 	for _, rel := range config.Links {
-		if _, exists := config.Nodes[rel.Source]; !exists {
+		sourceExists := false
+		targetExists := false
+		for _, node := range config.Nodes {
+			if node.ID == rel.Source {
+				sourceExists = true
+			}
+			if node.ID == rel.Target {
+				targetExists = true
+			}
+			if sourceExists && targetExists {
+				break
+			}
+		}
+		if !sourceExists {
 			return fmt.Errorf("link has non-existent source node '%s'", rel.Source)
 		}
-		if _, exists := config.Nodes[rel.Target]; !exists {
+		if !targetExists {
 			return fmt.Errorf("link has non-existent target node '%s'", rel.Target)
 		}
 	}

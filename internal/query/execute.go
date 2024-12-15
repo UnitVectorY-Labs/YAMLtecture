@@ -12,27 +12,38 @@ func ApplyQuery(query *Query, config *configuration.Config) (configuration.Confi
 
 	// Prepare a new Config to hold the filtered results
 	filteredConfig := configuration.Config{
-		Nodes: make(map[string]configuration.Node),
+		Nodes: []configuration.Node{},
 		Links: []configuration.Link{},
 	}
 
 	// Iterate over all nodes and apply filters
-	for id, node := range config.Nodes {
+	for _, node := range config.Nodes {
 		matchesAllFilters, err := nodeMatchesAllFilters(node, query.Nodes.Filters)
 		if err != nil {
-			return configuration.Config{}, fmt.Errorf("error applying filters to node '%s': %w", id, err)
+			return configuration.Config{}, fmt.Errorf("error applying filters to node '%s': %w", node.ID, err)
 		}
 		if matchesAllFilters {
-			filteredConfig.Nodes[id] = node
+			filteredConfig.Nodes = append(filteredConfig.Nodes, node)
 		}
 	}
 
 	// Iterate over all links and include only those where both source and target are in filtered nodes
 	for _, rel := range config.Links {
-		if _, sourceExists := filteredConfig.Nodes[rel.Source]; sourceExists {
-			if _, targetExists := filteredConfig.Nodes[rel.Target]; targetExists {
-				filteredConfig.Links = append(filteredConfig.Links, rel)
+		sourceExists := false
+		targetExists := false
+		for _, node := range filteredConfig.Nodes {
+			if node.ID == rel.Source {
+				sourceExists = true
 			}
+			if node.ID == rel.Target {
+				targetExists = true
+			}
+			if sourceExists && targetExists {
+				break
+			}
+		}
+		if sourceExists && targetExists {
+			filteredConfig.Links = append(filteredConfig.Links, rel)
 		}
 	}
 

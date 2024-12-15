@@ -24,8 +24,8 @@ type Link struct {
 
 // Config holds the aggregated architecture
 type Config struct {
-	Nodes map[string]Node `yaml:"nodes"`
-	Links []Link          `yaml:"links"`
+	Nodes []Node `yaml:"nodes"`
+	Links []Link `yaml:"links"`
 }
 
 // YamlString returns the YAML representation of the configuration

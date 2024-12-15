@@ -11,27 +11,15 @@ import (
 func ParseYAML(config string) (*Config, error) {
 	// Initialize an empty configuration
 	c := &Config{
-		Nodes: make(map[string]Node),
+		Nodes: []Node{},
 		Links: []Link{},
 	}
 
-	// Define a temporary struct to unmarshal the YAML
-	temp := struct {
-		Nodes []Node `yaml:"nodes"`
-		Links []Link `yaml:"links"`
-	}{}
-
-	// Unmarshal the YAML into the temporary struct
-	err := yaml.Unmarshal([]byte(config), &temp)
+	// Unmarshal the YAML into the Config struct
+	err := yaml.Unmarshal([]byte(config), c)
 	if err != nil {
 		return nil, fmt.Errorf("error unmarshalling YAML: %v", err)
 	}
-
-	// Convert the temporary struct to the Config struct
-	for _, node := range temp.Nodes {
-		c.Nodes[node.ID] = node
-	}
-	c.Links = temp.Links
 
 	return c, nil
 }
@@ -51,17 +39,19 @@ func LoadConfig(filePath string) (*Config, error) {
 
 func MergeConfigs(configs ...*Config) (*Config, error) {
 	merged := &Config{
-		Nodes: make(map[string]Node),
+		Nodes: []Node{},
 		Links: []Link{},
 	}
 
+	nodeMap := make(map[string]Node)
 	for _, config := range configs {
 		// Merge nodes
-		for id, node := range config.Nodes {
-			if _, exists := merged.Nodes[id]; exists {
-				return nil, fmt.Errorf("duplicate node ID '%s' found", id)
+		for _, node := range config.Nodes {
+			if _, exists := nodeMap[node.ID]; exists {
+				return nil, fmt.Errorf("duplicate node ID '%s' found", node.ID)
 			}
-			merged.Nodes[id] = node
+			nodeMap[node.ID] = node
+			merged.Nodes = append(merged.Nodes, node)
 		}
 
 		// Merge links

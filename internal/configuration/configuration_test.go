@@ -11,15 +11,15 @@ func TestLoadYAMLFiles(t *testing.T) {
 	}
 
 	// Assert nodes are loaded correctly
-	expectedNodes := map[string]Node{
-		"cluster": {
+	expectedNodes := []Node{
+		{
 			ID:   "cluster",
 			Type: "Infrastructure",
 			Attributes: map[string]interface{}{
 				"name": "Container Hosting",
 			},
 		},
-		"service_foo": {
+		{
 			ID:     "service_foo",
 			Type:   "Microservice",
 			Parent: "cluster",
@@ -28,7 +28,7 @@ func TestLoadYAMLFiles(t *testing.T) {
 				"language": "Java",
 			},
 		},
-		"service_bar": {
+		{
 			ID:     "service_bar",
 			Type:   "Microservice",
 			Parent: "cluster",
@@ -41,22 +41,27 @@ func TestLoadYAMLFiles(t *testing.T) {
 	if len(config.Nodes) != len(expectedNodes) {
 		t.Errorf("Expected %d nodes, got %d", len(expectedNodes), len(config.Nodes))
 	}
-	for id, expected := range expectedNodes {
-		actual, exists := config.Nodes[id]
-		if !exists {
-			t.Errorf("Expected node with ID '%s' not found", id)
-			continue
-		}
-		if actual.Type != expected.Type {
-			t.Errorf("Expected node '%s' type '%s', got '%s'", id, expected.Type, actual.Type)
-		}
-		if actual.Parent != expected.Parent {
-			t.Errorf("Expected node '%s' parent '%s', got '%s'", id, expected.Parent, actual.Parent)
-		}
-		for key, val := range expected.Attributes {
-			if actual.Attributes[key] != val {
-				t.Errorf("Expected node '%s' attribute '%s'='%v', got '%v'", id, key, val, actual.Attributes[key])
+	for _, expected := range expectedNodes {
+		found := false
+		for _, actual := range config.Nodes {
+			if actual.ID == expected.ID {
+				found = true
+				if actual.Type != expected.Type {
+					t.Errorf("Expected node '%s' type '%s', got '%s'", expected.ID, expected.Type, actual.Type)
+				}
+				if actual.Parent != expected.Parent {
+					t.Errorf("Expected node '%s' parent '%s', got '%s'", expected.ID, expected.Parent, actual.Parent)
+				}
+				for key, val := range expected.Attributes {
+					if actual.Attributes[key] != val {
+						t.Errorf("Expected node '%s' attribute '%s'='%v', got '%v'", expected.ID, key, val, actual.Attributes[key])
+					}
+				}
+				break
 			}
+		}
+		if !found {
+			t.Errorf("Expected node with ID '%s' not found", expected.ID)
 		}
 	}
 
