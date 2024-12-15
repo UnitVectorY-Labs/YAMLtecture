@@ -5,10 +5,10 @@ import (
 	"fmt"
 )
 
-// ApplyQuery filters the configuration based on the provided query.
+// ExecuteQuery filters the configuration based on the provided query.
 // It returns a new configuration containing only the nodes and links
 // that match the query conditions.
-func ApplyQuery(query *Query, config *configuration.Config) (configuration.Config, error) {
+func ExecuteQuery(query *Query, config *configuration.Config) (configuration.Config, error) {
 
 	// Prepare a new Config to hold the filtered results
 	filteredConfig := configuration.Config{

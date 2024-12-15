@@ -34,7 +34,12 @@ func TestGenerateMermaid(t *testing.T) {
 			}
 			expectedOutput := string(expectedBytes)
 
-			output, err := GenerateMermaid(config)
+			// TODO: ALlow tests to specify the settings for different test cases
+			mermaid := Mermaid{
+				Direction: "TB",
+			}
+
+			output, err := GenerateMermaid(config, &mermaid)
 			if err != nil {
 				t.Fatalf("GenerateMermaid returned error: %v", err)
 			}

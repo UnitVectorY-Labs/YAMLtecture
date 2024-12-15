@@ -8,10 +8,14 @@ import (
 	"YAMLtecture/internal/configuration"
 )
 
+type Mermaid struct {
+	Direction string `yaml:"direction"`
+}
+
 // GenerateMermaid creates a Mermaid diagram based on the links and includes all nodes.
-func GenerateMermaid(config *configuration.Config) (string, error) {
+func GenerateMermaid(config *configuration.Config, setting *Mermaid) (string, error) {
 	var mermaid strings.Builder
-	mermaid.WriteString("flowchart TD\n")
+	mermaid.WriteString(fmt.Sprintf("flowchart %s\n", setting.Direction))
 
 	mermaid.WriteString("    %% Nodes\n")
 
