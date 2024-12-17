@@ -60,7 +60,7 @@ func main() {
 		// Validate the query file
 		content := readFileContent(*queryFlag, true, *inFlag, true, "")
 
-		query, err := q.LoadQuery(content)
+		query, err := q.ParseQuery(content)
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "Error loading query: %v\n", err)
 			os.Exit(1)
@@ -105,7 +105,7 @@ func main() {
 			os.Exit(1)
 		}
 
-		query, err := q.LoadQuery(queryContent)
+		query, err := q.ParseQuery(queryContent)
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "Error loading query: %v\n", err)
 			os.Exit(1)

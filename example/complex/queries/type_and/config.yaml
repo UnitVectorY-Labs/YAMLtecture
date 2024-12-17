@@ -1,0 +1,7 @@
+nodes:
+    - id: service_bar
+      type: Microservice
+      attributes:
+        language: Go
+        name: Bar Service
+links: []

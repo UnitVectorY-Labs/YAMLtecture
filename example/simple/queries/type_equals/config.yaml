@@ -1,0 +1,17 @@
+nodes:
+    - id: service_foo
+      type: Microservice
+      attributes:
+        language: Java
+        name: Foo Service
+    - id: service_bar
+      type: Microservice
+      attributes:
+        language: Go
+        name: Bar Service
+links:
+    - source: service_foo
+      target: service_bar
+      type: API
+      attributes:
+        payload: example

@@ -5,11 +5,16 @@ import (
 	"fmt"
 )
 
+const (
+	NodeCondition = 1
+	LinkCondition = 2
+)
+
 // Validate checks if the query is valid.
 func (q *Query) Validate() error {
 
 	// Validate the nodes
-	err := q.Nodes.Validate()
+	err := q.Nodes.validate()
 	if err != nil {
 		return err
 	}
@@ -18,11 +23,25 @@ func (q *Query) Validate() error {
 }
 
 // Validate checks if the nodes are valid.
-func (nodes *Nodes) Validate() error {
+func (nodes *Nodes) validate() error {
 
 	// Validate the filters
 	for _, filter := range nodes.Filters {
-		err := filter.Validate()
+		err := filter.validate(NodeCondition)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+// Validate checks if the links are valid.
+func (links *Links) validate() error {
+
+	// Validate the filters
+	for _, filter := range links.Filters {
+		err := filter.validate(LinkCondition)
 		if err != nil {
 			return err
 		}
@@ -32,10 +51,10 @@ func (nodes *Nodes) Validate() error {
 }
 
 // Validate checks if the filter is valid.
-func (filter *Filter) Validate() error {
+func (filter *Filter) validate(filterType int) error {
 
 	// Validate the condition
-	err := filter.Condition.Validate()
+	err := filter.Condition.validate(filterType)
 	if err != nil {
 		return err
 	}
@@ -44,40 +63,115 @@ func (filter *Filter) Validate() error {
 }
 
 // Validate checks if the condition is valid.
-func (condition *Condition) Validate() error {
+func (condition *Condition) validate(filterType int) error {
 	var err error
 
-	// Validate the field
-	field := condition.Field
-	switch field {
-	case "id":
-	case "type":
-	case "parent":
-	default:
+	allowField := false
+	requireField := false
 
-		// Check if key starts with 'attribute.'
-		if len(field) > 10 && field[:10] == "attribute." {
-			// Validate the attribute key
-			err = common.IsValidName(field[10:], "attribute.key")
-			if err != nil {
-				return err
-			}
-		} else {
-			return fmt.Errorf("invalid field: %s", field)
-		}
-	}
+	allowValue := false
+	requireValue := false
+
+	allowCondition := false
+	requireCondition := false
 
 	// Validate the operation is 'equals' using a switch so it is easy to add more operations later
 	switch condition.Operator {
 	case "equals":
+		allowField = true
+		requireField = true
+
+		allowValue = true
+		requireValue = true
+
+	case "notEquals":
+
+		allowField = true
+		requireField = true
+
+		allowValue = true
+		requireValue = true
+
+	case "and":
+
+		allowCondition = true
+		requireCondition = true
+
+	case "or":
+
+		allowCondition = true
+		requireCondition = true
+
 	default:
 		return fmt.Errorf("invalid operator: %s", condition.Operator)
 	}
 
-	// Validate the value
-	err = common.IsValidValue(condition.Value, "value")
-	if err != nil {
-		return err
+	if requireField && condition.Field == "" {
+		return fmt.Errorf("field is required")
+	} else if !allowField && condition.Field != "" {
+		return fmt.Errorf("field is not allowed")
+	} else if allowField {
+		// Validate the field
+		field := condition.Field
+		switch field {
+		case "type":
+			// Allowed for everything
+		case "id":
+			if filterType != NodeCondition {
+				return fmt.Errorf("field 'id' is not allowed")
+			}
+		case "parent":
+			if filterType != NodeCondition {
+				return fmt.Errorf("field 'parent' is not allowed")
+			}
+		case "source":
+			if filterType != LinkCondition {
+				return fmt.Errorf("field 'source' is not allowed")
+			}
+		case "target":
+			if filterType != LinkCondition {
+				return fmt.Errorf("field 'target' is not allowed")
+			}
+		default:
+
+			// Check if key starts with 'attribute.'
+			if len(field) > 10 && field[:10] == "attribute." {
+				// Validate the attribute key
+				err = common.IsValidName(field[10:], "attribute.key")
+				if err != nil {
+					return err
+				}
+			} else {
+				return fmt.Errorf("invalid field: %s", field)
+			}
+		}
+	}
+
+	if requireValue && condition.Value == "" {
+		return fmt.Errorf("value is required")
+	} else if !allowValue && condition.Value != "" {
+		return fmt.Errorf("value is not allowed")
+	} else if allowValue {
+		// Validate the value
+		err = common.IsValidValue(condition.Value, "value")
+		if err != nil {
+			return err
+		}
+	}
+
+	if requireCondition && len(condition.Conditions) == 0 {
+		return fmt.Errorf("condition is required")
+	} else if !allowCondition && len(condition.Conditions) > 0 {
+		return fmt.Errorf("condition is not allowed")
+	} else if allowCondition {
+
+		// Validate the conditions
+		for _, subCondition := range condition.Conditions {
+			err = subCondition.validate(filterType)
+			if err != nil {
+				return err
+			}
+		}
 	}
 
 	return nil

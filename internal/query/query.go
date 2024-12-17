@@ -8,9 +8,14 @@ import (
 
 type Query struct {
 	Nodes Nodes `yaml:"nodes"`
+	Links Links `yaml:"links"`
 }
 
 type Nodes struct {
+	Filters []Filter `yaml:"filters"`
+}
+
+type Links struct {
 	Filters []Filter `yaml:"filters"`
 }
 
@@ -19,9 +24,10 @@ type Filter struct {
 }
 
 type Condition struct {
-	Field    string `yaml:"field"`
-	Operator string `yaml:"operator"`
-	Value    string `yaml:"value"`
+	Field      string      `yaml:"field"`
+	Operator   string      `yaml:"operator"`
+	Value      string      `yaml:"value"`
+	Conditions []Condition `yaml:"conditions"`
 }
 
 // YamlString returns the YAML representation of the query

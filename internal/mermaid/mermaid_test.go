@@ -2,50 +2,74 @@ package mermaid
 
 import (
 	"os"
+	"path/filepath"
+	"strings"
 	"testing"
 
 	"YAMLtecture/internal/configuration"
 )
 
 func TestGenerateMermaid(t *testing.T) {
-	tests := []struct {
-		name        string
-		configPath  string
-		mermaidPath string
-	}{
-		{
-			name:        "Single link",
-			configPath:  "../../example/simple/architecture.yaml",
-			mermaidPath: "../../example/simple/mermaid.mmd",
-		},
-		// ...add more test cases...
-	}
+	err := filepath.Walk("../../example", func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+		if info.IsDir() {
+			configPath := filepath.Join(path, "config.yaml")
+			mermaidConfigPath := filepath.Join(path, "mermaid.yaml")
+			mermaidPath := filepath.Join(path, "mermaid.mmd")
 
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			config, err := configuration.LoadConfig(tt.configPath)
+			if _, err := os.Stat(configPath); os.IsNotExist(err) {
+				return nil
+			}
+			if _, err := os.Stat(mermaidConfigPath); os.IsNotExist(err) {
+				return nil
+			}
+			if _, err := os.Stat(mermaidPath); os.IsNotExist(err) {
+				return nil
+			}
+
+			relDir, err := filepath.Rel("../../example", filepath.Dir(mermaidPath))
 			if err != nil {
-				t.Fatalf("Failed to load config: %v", err)
+				return err
 			}
 
-			expectedBytes, err := os.ReadFile(tt.mermaidPath)
-			if err != nil {
-				t.Fatalf("Failed to read Mermaid file: %v", err)
-			}
-			expectedOutput := string(expectedBytes)
+			sanitizedRelDir := strings.ReplaceAll(relDir, string(filepath.Separator), "#")
 
-			// TODO: ALlow tests to specify the settings for different test cases
-			mermaid := Mermaid{
-				Direction: "TB",
-			}
+			t.Run(sanitizedRelDir, func(t *testing.T) {
+				config, err := configuration.LoadConfig(configPath)
+				if err != nil {
+					t.Fatalf("Failed to load config: %v", err)
+				}
 
-			output, err := GenerateMermaid(config, &mermaid)
-			if err != nil {
-				t.Fatalf("GenerateMermaid returned error: %v", err)
-			}
-			if output != expectedOutput {
-				t.Errorf("Expected output:\n%s\nGot:\n%s", expectedOutput, output)
-			}
-		})
+				mermaidConfig, err := LoadMermaid(mermaidConfigPath)
+				if err != nil {
+					t.Fatalf("Failed to load mermaid config: %v", err)
+				}
+
+				expectedBytes, err := os.ReadFile(mermaidPath)
+				if err != nil {
+					t.Fatalf("Failed to read Mermaid file: %v", err)
+				}
+				expectedOutput := string(expectedBytes)
+
+				mermaid := Mermaid{
+					Direction: mermaidConfig.Direction,
+					// ... other settings from mermaidConfig ...
+				}
+
+				output, err := GenerateMermaid(config, &mermaid)
+				if err != nil {
+					t.Fatalf("GenerateMermaid returned error: %v", err)
+				}
+				if output != expectedOutput {
+					t.Errorf("Expected output:\n%s\nGot:\n%s", expectedOutput, output)
+				}
+			})
+		}
+		return nil
+	})
+	if err != nil {
+		t.Fatalf("Error walking through example folder: %v", err)
 	}
 }

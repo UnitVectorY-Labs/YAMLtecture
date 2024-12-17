@@ -1,0 +1,18 @@
+nodes:
+    - id: cluster
+      type: Infrastructure
+      attributes:
+        name: Container Hosting
+    - id: db_foo
+      type: Database
+      parent: cluster
+      attributes:
+        database: Valkey
+        name: Foo Database
+    - id: db_bar
+      type: Database
+      parent: cluster
+      attributes:
+        database: MariaDB
+        name: Bar Database
+links: []

@@ -1,0 +1,6 @@
+links:
+  filters:
+    - condition:
+        field: type
+        operator: equals
+        value: "DB"
