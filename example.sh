@@ -72,6 +72,9 @@ log_entry() {
     Deleted)
       color="$RED"
       ;;
+    Merged)
+      color="$GREEN"
+      ;;
     *)
       color="$NC"
       ;;
