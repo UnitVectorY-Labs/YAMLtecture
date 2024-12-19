@@ -221,6 +221,18 @@ process_config_dir() {
   local name=$(basename "$dir")
   log_entry "$depth" "$name" "Processing" "$is_last"
 
+  # Process the "configs" folder if it exists
+  if [ -d "$dir/configs" ]; then
+      echo "./YAMLtecture --in=$dir/configs --mergeConfig" --out=$dir/config.yaml >> "$LOG_FILE"
+      ./YAMLtecture --in="$dir/configs" --mergeConfig --out=$dir/config.yaml >>"$LOG_FILE" 2>&1
+      echo "" >> "$LOG_FILE"
+      if [ $? -ne 0 ]; then
+          log_entry "$((depth + 1))" "configs" "Error" "no"
+      else
+          log_entry "$((depth + 1))" "configs" "Merged" "no"
+      fi
+  fi
+
   # Collect all items in the configuration directory except 'queries'
   local items=()
   for item in "$dir"/*; do

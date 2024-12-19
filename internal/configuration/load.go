@@ -3,6 +3,7 @@ package configuration
 import (
 	"fmt"
 	"os"
+	"path/filepath"
 
 	"gopkg.in/yaml.v3"
 )
@@ -22,6 +23,39 @@ func ParseYAML(config string) (*Config, error) {
 	}
 
 	return c, nil
+}
+
+func LoadFolder(folderPath string) (*Config, error) {
+	// Verify the folderPath is a folder
+	fileInfo, err := os.Stat(folderPath)
+	if err != nil {
+		return nil, fmt.Errorf("error reading folder: %v", err)
+	}
+	if !fileInfo.IsDir() {
+		return nil, fmt.Errorf("folderPath is not a directory")
+	}
+
+	// Loop through the folder contents loading in all .yaml files with LoadConfig
+	configs := []*Config{}
+	files, err := os.ReadDir(folderPath)
+	if err != nil {
+		return nil, fmt.Errorf("error reading folder: %v", err)
+	}
+	for _, file := range files {
+		if file.IsDir() {
+			continue
+		}
+		if filepath.Ext(file.Name()) == ".yaml" {
+			config, err := LoadConfig(filepath.Join(folderPath, file.Name()))
+			if err != nil {
+				return nil, fmt.Errorf("error loading config file: %v", err)
+			}
+			configs = append(configs, config)
+		}
+	}
+
+	// Merge the loaded configs
+	return MergeConfigs(configs...)
 }
 
 // LoadConfig loads and parses a single YAML configuration file from the given path.

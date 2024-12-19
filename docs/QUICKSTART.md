@@ -12,16 +12,22 @@ go build
 go test ./...
 ```
 
-## Validate Example
+## Validate Config
 
 ```bash
-./YAMLtecture -file=./example/simple/architecture.yaml -validate
+./YAMLtecture --configIn=./example/simple/config.yaml --validateConfig
+```
+
+## Merge Configs
+
+```bash
+./YAMLtecture --in=./example/complex/configs/ --mergeConfig
 ```
 
 ## Generate Graph
 
 ```bash
-./YAMLtecture -file=./example/simple/architecture.yaml -graph
+./YAMLtecture --configIn=./example/simple/config.yaml --generateMermaid
 ```
 
 Rendering a graph with mermaid can be done on the CLI with [mermaid-cli](https://github.com/mermaid-js/mermaid-cli).
@@ -29,5 +35,5 @@ Rendering a graph with mermaid can be done on the CLI with [mermaid-cli](https:/
 Piping these togeher you can generate and open a graph in a single command:
 
 ```bash
-rm -f out.png && ./YAMLtecture -file=./example/complex/architecture.yaml -graph | mmdc -i - -o ./out.png && open ./out.png
+rm -f out.png && ./YAMLtecture -file=./example/complex/config.yaml -graph | mmdc -i - -o ./out.png && open ./out.png
 ```

@@ -1,0 +1,21 @@
+nodes:
+  - id: db_foo
+    type: Database
+    parent: cluster
+    attributes:
+      name: "Foo Database"
+      database: "Valkey"
+  - id: db_bar
+    type: Database
+    parent: cluster
+    attributes:
+      name: "Bar Database"
+      database: "MariaDB"
+
+links:
+  - source: service_foo
+    target: db_foo
+    type: "DB"
+  - source: service_bar
+    target: db_bar
+    type: "DB"

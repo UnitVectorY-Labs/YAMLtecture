@@ -27,6 +27,7 @@ var (
 	validateConfigFlag  = flag.Bool("validateConfig", false, "Validate the Config YAML architecture file")
 	validateQueryFlag   = flag.Bool("validateQuery", false, "Validate the Query YAML architecture file")
 	validateMermaidFlag = flag.Bool("validateMermaid", false, "Validate the Mermaid settings")
+	mergeConfigFlag     = flag.Bool("mergeConfig", false, "Merge the Config YAML architecture file")
 	executeQueryFlag    = flag.Bool("executeQuery", false, "Execute the Query YAML architecture file")
 	generateMermaidFlag = flag.Bool("generateMermaid", false, "Generate a Mermaid diagram from the Config YAML architecture file")
 
@@ -38,7 +39,7 @@ func main() {
 	flag.Parse()
 
 	// First determine what we are doing
-	checkMultipleCommands(*validateConfigFlag, *validateQueryFlag, *validateMermaidFlag, *executeQueryFlag, *generateMermaidFlag)
+	checkMultipleCommands(*validateConfigFlag, *validateQueryFlag, *validateMermaidFlag, *mergeConfigFlag, *executeQueryFlag, *generateMermaidFlag)
 
 	if *validateConfigFlag {
 		// Validate the config file
@@ -71,6 +72,27 @@ func main() {
 			fmt.Fprintf(os.Stderr, "Error validating query: %v\n", err)
 			os.Exit(1)
 		}
+
+	} else if *mergeConfigFlag {
+		// Validate that inFlag was set and is a folder
+		if *inFlag == "" {
+			fmt.Fprintf(os.Stderr, "Error: No input folder specified\n")
+			os.Exit(1)
+		}
+
+		config, err := c.LoadFolder(*inFlag)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "Error loading folder: %v\n", err)
+			os.Exit(1)
+		}
+
+		err = config.Validate()
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "Error validating configuration: %v\n", err)
+			os.Exit(1)
+		}
+
+		writeOutput(config.YamlString(), *outFlag)
 
 	} else if *validateMermaidFlag {
 		// Validate the mermaid file

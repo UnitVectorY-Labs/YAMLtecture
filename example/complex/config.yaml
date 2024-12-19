@@ -1,42 +1,41 @@
 nodes:
-  - id: cluster
-    type: Infrastructure
-    attributes:
-      name: "Container Hosting"
-  - id: service_foo
-    type: Microservice
-    parent: cluster
-    attributes:
-      name: "Foo Service"
-      language: "Java"
-  - id: db_foo
-    type: Database
-    parent: cluster
-    attributes:
-      name: "Foo Database"
-      database: "Valkey"
-  - id: service_bar
-    type: Microservice
-    parent: cluster
-    attributes:
-      name: "Bar Service"
-      language: "Go"
-  - id: db_bar
-    type: Database
-    parent: cluster
-    attributes:
-      name: "Bar Database"
-      database: "MariaDB"
-
+    - id: service_foo
+      type: Microservice
+      parent: cluster
+      attributes:
+        language: Java
+        name: Foo Service
+    - id: service_bar
+      type: Microservice
+      parent: cluster
+      attributes:
+        language: Go
+        name: Bar Service
+    - id: cluster
+      type: Infrastructure
+      attributes:
+        name: Container Hosting
+    - id: db_foo
+      type: Database
+      parent: cluster
+      attributes:
+        database: Valkey
+        name: Foo Database
+    - id: db_bar
+      type: Database
+      parent: cluster
+      attributes:
+        database: MariaDB
+        name: Bar Database
 links:
-  - source: service_foo
-    target: service_bar
-    type: "API"
-    attributes:
-      payload: "example"
-  - source: service_foo
-    target: db_foo
-    type: "DB"
-  - source: service_bar
-    target: db_bar
-    type: "DB"
+    - source: service_foo
+      target: service_bar
+      type: API
+      attributes:
+        payload: example
+    - source: service_foo
+      target: db_foo
+      type: DB
+    - source: service_bar
+      target: db_bar
+      type: DB

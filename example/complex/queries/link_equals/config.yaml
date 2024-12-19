@@ -1,26 +1,26 @@
 nodes:
-    - id: cluster
-      type: Infrastructure
-      attributes:
-        name: Container Hosting
     - id: service_foo
       type: Microservice
       parent: cluster
       attributes:
         language: Java
         name: Foo Service
-    - id: db_foo
-      type: Database
-      parent: cluster
-      attributes:
-        database: Valkey
-        name: Foo Database
     - id: service_bar
       type: Microservice
       parent: cluster
       attributes:
         language: Go
         name: Bar Service
+    - id: cluster
+      type: Infrastructure
+      attributes:
+        name: Container Hosting
+    - id: db_foo
+      type: Database
+      parent: cluster
+      attributes:
+        database: Valkey
+        name: Foo Database
     - id: db_bar
       type: Database
       parent: cluster

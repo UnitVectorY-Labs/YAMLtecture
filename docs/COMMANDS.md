@@ -38,6 +38,14 @@ The inputs are used in the following order of precedence:
 
 This command will output the validation errors and warnings to the console through the standard output.
 
+## Merge Config
+
+The merge config command, `--mergeConfig`, takes in a folder path and merges all of the configuration files into a single output configuration file.
+
+The only input for this command is the `--in=<folderPath>` flag which is used to specify a folder path that contains the configuration files unlike other commands.
+
+The output of this command will be the result of the query which is the config YAML that is output to STDOUT or if `--out=<filePath>` is specified then the output will be written to the specified file.
+
 ## Execute Query
 
 The execute query command, `--executeQuery`, takes in both a configuration file and a query file. The validate config and validate query checks are always performed, but the details as for the failure of these checks are not displayed.
