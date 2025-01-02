@@ -1,30 +1,48 @@
-name: Go CI
+name: Build and Test Go Application
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main
   pull_request:
-    branches: [ main ]
+    branches:
+      - main
 
 jobs:
-  build:
+  build-and-test:
+    name: Build and Test
     runs-on: ubuntu-latest
     timeout-minutes: 30
 
     steps:
-      - name: Checkout repository
+      - name: Checkout code
         uses: actions/checkout@v4
         with:
           persist-credentials: false
-      - name: Setup Go
+
+      - name: Set up Go
         uses: actions/setup-go@v5
         with:
           go-version: '1.23.4'
+
+      - name: Cache Go modules
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/go-build
+            ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
+
       - name: Install dependencies
-        run: go get .
-      - name: Build
+        run: go mod tidy
+
+      - name: Build the application
         run: go build -v ./...
-      - name: Test with the Go CLI
+
+      - name: Run tests
         run: go test -race -coverprofile=coverage.txt -covermode=atomic ./...
+
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v5
         with:
