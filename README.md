@@ -1,4 +1,4 @@
-[![License](https://img.shields.io/badge/license-MIT-blue)](https://opensource.org/licenses/MIT) [![Active](https://img.shields.io/badge/Status-Active-green)](https://guide.unitvectorylabs.com/bestpractices/status/#active) [![codecov](https://codecov.io/gh/UnitVectorY-Labs/YAMLtecture/graph/badge.svg?token=YMO7aAligO)](https://codecov.io/gh/UnitVectorY-Labs/YAMLtecture)
+[![License](https://img.shields.io/badge/license-MIT-blue)](https://opensource.org/licenses/MIT) [![Concept](https://img.shields.io/badge/Status-Concept-white)](https://guide.unitvectorylabs.com/bestpractices/status/#concept) [![codecov](https://codecov.io/gh/UnitVectorY-Labs/YAMLtecture/graph/badge.svg?token=YMO7aAligO)](https://codecov.io/gh/UnitVectorY-Labs/YAMLtecture)
 
 # YAMLtecture
 
