@@ -1,8 +1,9 @@
 package query
 
 import (
-	"YAMLtecture/internal/common"
 	"fmt"
+
+	"github.com/UnitVectorY-Labs/YAMLtecture/internal/common"
 )
 
 const (

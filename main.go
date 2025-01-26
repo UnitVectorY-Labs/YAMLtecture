@@ -8,9 +8,9 @@ import (
 
 	"golang.org/x/term"
 
-	c "YAMLtecture/internal/configuration"
-	m "YAMLtecture/internal/mermaid"
-	q "YAMLtecture/internal/query"
+	c "github.com/UnitVectorY-Labs/YAMLtecture/internal/configuration"
+	m "github.com/UnitVectorY-Labs/YAMLtecture/internal/mermaid"
+	q "github.com/UnitVectorY-Labs/YAMLtecture/internal/query"
 )
 
 var (

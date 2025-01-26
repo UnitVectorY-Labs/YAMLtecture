@@ -1,4 +1,4 @@
-module YAMLtecture
+module github.com/UnitVectorY-Labs/YAMLtecture
 
 go 1.23.5
 

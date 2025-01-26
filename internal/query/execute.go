@@ -1,8 +1,9 @@
 package query
 
 import (
-	"YAMLtecture/internal/configuration"
 	"fmt"
+
+	"github.com/UnitVectorY-Labs/YAMLtecture/internal/configuration"
 )
 
 // ExecuteQuery filters the configuration based on the provided query.

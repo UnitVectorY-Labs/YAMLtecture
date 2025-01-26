@@ -5,7 +5,7 @@ import (
 	"sort"
 	"strings"
 
-	"YAMLtecture/internal/configuration"
+	"github.com/UnitVectorY-Labs/YAMLtecture/internal/configuration"
 )
 
 type Mermaid struct {

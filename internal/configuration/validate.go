@@ -3,7 +3,7 @@ package configuration
 import (
 	"fmt"
 
-	"YAMLtecture/internal/common"
+	"github.com/UnitVectorY-Labs/YAMLtecture/internal/common"
 )
 
 // ValidateConfig performs all required validations on the configuration.

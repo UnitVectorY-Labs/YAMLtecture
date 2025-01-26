@@ -6,7 +6,7 @@ import (
 	"strings"
 	"testing"
 
-	"YAMLtecture/internal/configuration"
+	"github.com/UnitVectorY-Labs/YAMLtecture/internal/configuration"
 )
 
 func TestGenerateQuery(t *testing.T) {
