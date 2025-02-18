@@ -1,0 +1,14 @@
+title: YAMLtecture
+description: "Lightweight CLI tool for generating outputs, including Mermaid diagrams, from YAML-defined system architectures."
+
+remote_theme: just-the-docs/just-the-docs@v0.7.0
+plugins:
+  - jekyll-remote-theme
+
+# Footer "Edit this page on GitHub" link text
+gh_edit_link: true
+gh_edit_link_text: "Edit this page on GitHub."
+gh_edit_repository: "https://github.com/UnitVectorY-Labs/YAMLtecture"
+gh_edit_branch: "main"
+gh_edit_source: "docs"
+gh_edit_view_mode: "tree"
