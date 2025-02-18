@@ -1,3 +1,10 @@
+---
+layout: default
+title: Mermaid
+nav_order: 6
+permalink: /mermaid
+---
+
 # Mermaid
 
 One core capability of YAMLtecture is the ability to transform your YAML definitions into Mermaid.

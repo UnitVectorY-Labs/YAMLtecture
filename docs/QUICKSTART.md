@@ -1,4 +1,11 @@
-# Quickstart
+---
+layout: default
+title: Quick Start
+nav_order: 2
+permalink: /quickstart
+---
+
+# Quick Start
 
 ## Compile
 

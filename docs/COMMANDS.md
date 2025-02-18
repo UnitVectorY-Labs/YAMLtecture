@@ -1,3 +1,10 @@
+---
+layout: default
+title: Commands
+nav_order: 4
+permalink: /commands
+---
+
 # Commands
 
 There are a number of different commands that YAMLtecture supports for various operations. These commands are used to interact with the YAMLtecture configuration, query the configuration, and render the configuration as a mermaid diagram.

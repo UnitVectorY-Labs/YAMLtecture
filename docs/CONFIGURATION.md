@@ -1,3 +1,10 @@
+---
+layout: default
+title: Configuration
+nav_order: 3
+permalink: /configuration
+---
+
 # Configuration
 
 The configuration file for YAMLtecture has two main building blocks, nodes that define the various elements in the architecture and links that define the links between the nodes. Both nodes and links can have attributes that provide additional metadata.
