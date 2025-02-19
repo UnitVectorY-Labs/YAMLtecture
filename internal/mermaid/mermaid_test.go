@@ -10,7 +10,7 @@ import (
 )
 
 func TestGenerateMermaid(t *testing.T) {
-	err := filepath.Walk("../../example", func(path string, info os.FileInfo, err error) error {
+	err := filepath.Walk("../../tests", func(path string, info os.FileInfo, err error) error {
 		if err != nil {
 			return err
 		}
@@ -29,7 +29,7 @@ func TestGenerateMermaid(t *testing.T) {
 				return nil
 			}
 
-			relDir, err := filepath.Rel("../../example", filepath.Dir(mermaidPath))
+			relDir, err := filepath.Rel("../../tests", filepath.Dir(mermaidPath))
 			if err != nil {
 				return err
 			}

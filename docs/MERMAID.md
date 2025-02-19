@@ -21,7 +21,7 @@ One core capability of YAMLtecture is the ability to transform your YAML definit
 ## Generate Mermaid Flowchart
 
 ```bash
-./YAMLtecture -configIn=./example/simple/architecture.yaml -mermaidIn=./example/simple/mermaid.yaml -generateMermaid
+./YAMLtecture -configIn=./tests/simple/architecture.yaml -mermaidIn=./tests/simple/mermaid.yaml -generateMermaid
 ```
 
 ## Setting Configuration

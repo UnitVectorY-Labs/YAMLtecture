@@ -3,7 +3,7 @@
 
 YAMLtecture
 *.png
-example.log
+generate.log
 
 ### Eclipse ###
 .metadata

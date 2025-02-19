@@ -9,13 +9,13 @@ import (
 )
 
 func TestLoadYAMLFiles(t *testing.T) {
-	err := filepath.Walk("../../example", func(path string, info os.FileInfo, err error) error {
+	err := filepath.Walk("../../tests", func(path string, info os.FileInfo, err error) error {
 		if err != nil {
 			return err
 		}
 		if info.Name() == "config.yaml" {
 
-			relDir, err := filepath.Rel("../../example", filepath.Dir(path))
+			relDir, err := filepath.Rel("../../tests", filepath.Dir(path))
 			if err != nil {
 				return err
 			}

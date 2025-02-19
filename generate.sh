@@ -11,7 +11,7 @@ NC="\033[0m" # No Color
 declare -a TREE_INDICATORS=()
 
 # Define log file
-LOG_FILE="example.log"
+LOG_FILE="generate.log"
 
 # Function to log messages with timestamps
 log() {
@@ -313,8 +313,8 @@ process_config_dir() {
 }
 
 # Function to process the example directory
-process_example_dir() {
-  local example_dir="example"
+process_tests_dir() {
+  local example_dir="tests"
   if [ -d "$example_dir" ]; then
     # Collect top-level directories
     local dirs=()
@@ -347,7 +347,7 @@ rm -f "$LOG_FILE"
 compile_go_app
 
 # Process the example directory
-process_example_dir
+process_tests_dir
 
 # Optionally, clean up the binary after processing
 # rm -f YAMLtecture
