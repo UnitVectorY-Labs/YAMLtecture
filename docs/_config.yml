@@ -5,6 +5,11 @@ remote_theme: just-the-docs/just-the-docs@v0.7.0
 plugins:
   - jekyll-remote-theme
 
+# External navigation links
+nav_external_links:
+  - title: YAMLtecture on GitHub
+    url: https://github.com/UnitVectorY-Labs/YAMLtecture
+
 # Footer "Edit this page on GitHub" link text
 gh_edit_link: true
 gh_edit_link_text: "Edit this page on GitHub."
