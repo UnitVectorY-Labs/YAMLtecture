@@ -6,6 +6,15 @@ permalink: /mermaid
 ---
 
 # Mermaid
+{: .no_toc }
+
+## Table of contents
+{: .no_toc .text-delta }
+
+1. TOC
+{:toc}
+
+---
 
 One core capability of YAMLtecture is the ability to transform your YAML definitions into Mermaid.
 

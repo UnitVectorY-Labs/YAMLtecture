@@ -6,6 +6,15 @@ permalink: /configuration
 ---
 
 # Configuration
+{: .no_toc }
+
+## Table of contents
+{: .no_toc .text-delta }
+
+1. TOC
+{:toc}
+
+---
 
 The configuration file for YAMLtecture has two main building blocks, nodes that define the various elements in the architecture and links that define the links between the nodes. Both nodes and links can have attributes that provide additional metadata.
 

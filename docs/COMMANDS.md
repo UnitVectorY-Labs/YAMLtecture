@@ -6,6 +6,15 @@ permalink: /commands
 ---
 
 # Commands
+{: .no_toc }
+
+## Table of contents
+{: .no_toc .text-delta }
+
+1. TOC
+{:toc}
+
+---
 
 There are a number of different commands that YAMLtecture supports for various operations. These commands are used to interact with the YAMLtecture configuration, query the configuration, and render the configuration as a mermaid diagram.
 
