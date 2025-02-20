@@ -7,17 +7,20 @@ BLUE="\033[0;34m"
 YELLOW="\033[1;33m"
 NC="\033[0m" # No Color
 
-# Array to keep track of tree indicators for each depth
-declare -a TREE_INDICATORS=()
-
 # Define log file
 LOG_FILE="generate.log"
+
+# Add failure flag
+FAILURE=0
+
+# Array to keep track of tree indicators for each depth
+declare -a TREE_INDICATORS=()
 
 # Function to log messages with timestamps
 log() {
     local level=$1
     local message=$2
-    echo "[$(date '+%Y-%m-%d %H:%M:%S')] [$level] $message" | tee -a "$LOG_FILE"
+    echo "[$(date '+%Y-%m-%d %H:%M:%S')] [$level] $message" >> "$LOG_FILE"
 }
 
 # Logging function
@@ -84,16 +87,50 @@ log_entry() {
   echo -e "${prefix}${name} ${color}[${status}]${NC}"
 }
 
+# Helper function to execute commands and handle errors
+# Arguments:
+#   $1 - Command to execute
+#   $2 - Depth level
+#   $3 - Name to display in log
+#   $4 - Success status message
+#   $5 - Is last item ("yes" or "no")
+execute_command() {
+    local cmd=$1
+    local depth=$2
+    local name=$3
+    local success_status=$4
+    local is_last=$5
+
+    # Save current stdout/stderr
+    exec 3>&1 4>&2
+    
+    # Redirect command output to log file
+    exec 1>>"$LOG_FILE" 2>&1
+    
+    echo "$cmd"
+    set -o pipefail
+    eval "$cmd"
+    local status=$?
+    echo ""
+    
+    # Restore stdout/stderr
+    exec 1>&3 3>&- 2>&4 4>&-
+    
+    if [ $status -ne 0 ]; then
+        log_entry "$depth" "$name" "Error" "$is_last"
+        FAILURE=1
+        return 1
+    fi
+    
+    log_entry "$depth" "$name" "$success_status" "$is_last"
+    return 0
+}
+
 # Function to compile the Go application
 compile_go_app() {
-  go build -o YAMLtecture >>"$LOG_FILE" 2>&1
-  if [ $? -ne 0 ]; then
-    log_entry 1 "YAMLtecture" "Error" "yes"
-    exit 1
-  else
-    # Log the built application as [Built]
-    log_entry 1 "YAMLtecture" "Built" "yes"
-  fi
+    if ! execute_command "go build -o YAMLtecture" 1 "YAMLtecture" "Built" "yes"; then
+        exit 1
+    fi
 }
 
 # Function to process mermaid.yaml and generate mermaid.mmd
@@ -101,37 +138,20 @@ compile_go_app() {
 #   $1 - Directory path
 #   $2 - Depth level
 process_mermaid() {
-  local dir="${1%/}"
-  local depth=$2
+    local dir="${1%/}"
+    local depth=$2
 
-  local mermaid_in="$dir/mermaid.yaml"
-  local mermaid_out="$dir/mermaid.mmd"
+    [ ! -f "$dir/mermaid.yaml" ] && return 0
 
-  if [ -f "$mermaid_in" ]; then
-    echo "./YAMLtecture --validateMermaid --mermaidIn=$mermaid_in" >> "$LOG_FILE"
-    ./YAMLtecture --validateMermaid --mermaidIn="$mermaid_in" >>"$LOG_FILE" 2>&1
-    echo "" >> "$LOG_FILE"
-    if [ $? -ne 0 ]; then
-      log_entry "$depth" "mermaid.yaml" "Error" "no"
-    else
-      log_entry "$depth" "mermaid.yaml" "Valid" "no"
-      # Generate mermaid.mmd
-      echo "./YAMLtecture --generateMermaid --configIn=$dir/config.yaml --mermaidIn=$mermaid_in --out=$mermaid_out" >> "$LOG_FILE"
-      ./YAMLtecture --generateMermaid --configIn="$dir/config.yaml" --mermaidIn="$mermaid_in" --out="$mermaid_out" >>"$LOG_FILE" 2>&1
-      echo "" >> "$LOG_FILE"
-      if [ $? -ne 0 ]; then
-        log_entry "$depth" "mermaid.mmd" "Error" "no"
-      else
-        log_entry "$depth" "mermaid.mmd" "Generated" "no"
-      fi
+    if ! execute_command "./YAMLtecture --validateMermaid --mermaidIn=$dir/mermaid.yaml" "$depth" "mermaid.yaml" "Valid" "no"; then
+        return 1
     fi
-  else
-    # No mermaid.yaml found, remove mermaid.mmd if exists
-    if [ -f "$mermaid_out" ]; then
-      rm -f "$mermaid_out"
-      log_entry "$depth" "mermaid.mmd" "Deleted" "no"
+
+    if ! execute_command "./YAMLtecture --generateMermaid --configIn=$dir/config.yaml --mermaidIn=$dir/mermaid.yaml --out=$dir/mermaid.mmd" "$depth" "mermaid.mmd" "Generated" "no"; then
+        return 1
     fi
-  fi
+
+    return 0
 }
 
 # Function to process queries within a directory
@@ -139,76 +159,68 @@ process_mermaid() {
 #   $1 - Configuration directory path
 #   $2 - Depth level
 process_queries() {
-  local config_dir=$1
-  local depth=$2
+    local config_dir=$1
+    local depth=$2
 
-  local queries_dir="$config_dir/queries"
-  if [ -d "$queries_dir" ]; then
-    # Log the 'queries' directory
-    local is_last_queries="yes" # Assuming 'queries' is the last item in its parent directory
-    log_entry "$depth" "queries" "Processing" "$is_last_queries"
+    local queries_dir="$config_dir/queries"
+    if [ ! -d "$queries_dir" ]; then
+        log_entry "$depth" "queries" "Error" "no"
+        FAILURE=1
+        return 1
+    fi
 
-    # Collect all query directories
+    log_entry "$depth" "queries" "Processing" "yes"
+
     local queries=()
     for query in "$queries_dir"/*/; do
-      [ -d "$query" ] || continue
-      queries+=("$query")
+        [ -d "$query" ] || continue
+        queries+=("$query")
     done
 
     local total=${#queries[@]}
     local count=0
 
     for query in "${queries[@]}"; do
-      count=$((count + 1))
-      local current_is_last="no"
-      if [ "$count" -eq "$total" ]; then
-        current_is_last="yes"
-      fi
+        count=$((count + 1))
+        local current_is_last="no"
+        [ $count -eq $total ] && current_is_last="yes"
 
-      # Remove the trailing slash and get the basename
-      query=${query%*/}
-      local queryName=$(basename "$query")
+        query=${query%*/}
+        local queryName=$(basename "$query")
+        log_entry "$((depth + 1))" "$queryName" "Processing" "$current_is_last"
 
-      # Log the query directory
-      log_entry "$((depth + 1))" "$queryName" "Processing" "$current_is_last"
-
-      # Validate the query.yaml
-      local query_file="$query/query.yaml"
-      if [ -f "$query_file" ]; then
-        echo "./YAMLtecture --validateQuery --queryIn=$query_file" >> "$LOG_FILE"
-        ./YAMLtecture --validateQuery --queryIn="$query_file" >>"$LOG_FILE" 2>&1
-        echo "" >> "$LOG_FILE"
-        if [ $? -ne 0 ]; then
-          log_entry "$((depth + 2))" "query.yaml" "Error" "no"
-        else
-          log_entry "$((depth + 2))" "query.yaml" "Valid" "no"
-          # Execute the query
-          echo "./YAMLtecture --executeQuery --configIn=$config_dir/config.yaml --queryIn=$query_file --out=$query/config.yaml" >> "$LOG_FILE"
-          ./YAMLtecture --executeQuery --configIn="$config_dir/config.yaml" --queryIn="$query_file" --out="$query/config.yaml" >>"$LOG_FILE" 2>&1
-          echo "" >> "$LOG_FILE"
-          if [ $? -ne 0 ]; then
-            log_entry "$((depth + 2))" "config.yaml" "Error" "no"
-          else
-            log_entry "$((depth + 2))" "config.yaml" "Generated" "no"
-            # Validate the generated config.yaml
-            echo "./YAMLtecture --validateConfig --configIn=$query/config.yaml" >> "$LOG_FILE"
-            ./YAMLtecture --validateConfig --configIn="$query/config.yaml" >>"$LOG_FILE" 2>&1
-            echo "" >> "$LOG_FILE"
-            if [ $? -ne 0 ]; then
-              log_entry "$((depth + 2))" "config.yaml" "Error" "no"
-            else
-              # Process mermaid for the query
-              process_mermaid "$query" "$((depth + 2))"
-            fi
-          fi
+        local query_file="$query/query.yaml"
+        if [ ! -f "$query_file" ]; then
+            log_entry "$((depth + 2))" "query.yaml" "Error" "no"
+            FAILURE=1
+            continue
         fi
-      else
-        log_entry "$((depth + 2))" "query.yaml" "Error" "no"
-      fi
+
+        if ! execute_command "./YAMLtecture --validateQuery --queryIn=$query_file" "$((depth + 2))" "query.yaml" "Valid" "no"; then
+            FAILURE=1
+            continue
+        fi
+
+        if ! execute_command "./YAMLtecture --executeQuery --configIn=$config_dir/config.yaml --queryIn=$query_file --out=$query/config.yaml" "$((depth + 2))" "config.yaml" "Generated" "no"; then
+            FAILURE=1
+            continue
+        fi
+
+        if [ ! -f "$query/config.yaml" ]; then
+            log_entry "$((depth + 2))" "config.yaml" "Error" "no"
+            FAILURE=1
+            continue
+        fi
+
+        if ! execute_command "./YAMLtecture --validateConfig --configIn=$query/config.yaml" "$((depth + 2))" "config.yaml" "Valid" "no"; then
+            FAILURE=1
+            continue
+        fi
+
+        process_mermaid "$query" "$((depth + 2))"
     done
-  else
-    log_entry "$depth" "queries" "Error" "no"
-  fi
+
+    return $FAILURE
 }
 
 # Function to process a single configuration directory
@@ -217,131 +229,64 @@ process_queries() {
 #   $2 - Depth level
 #   $3 - Is last item in the parent directory ("yes" or "no")
 process_config_dir() {
-  local dir="${1%/}"
-  local depth=$2
-  local is_last=$3
+    local dir="${1%/}"
+    local depth=$2
+    local is_last=$3
 
-  local name=$(basename "$dir")
-  log_entry "$depth" "$name" "Processing" "$is_last"
+    local name=$(basename "$dir")
+    log_entry "$depth" "$name" "Processing" "$is_last"
 
-  # Process the "configs" folder if it exists
-  if [ -d "$dir/configs" ]; then
-      echo "./YAMLtecture --in=$dir/configs --mergeConfig" --out=$dir/config.yaml >> "$LOG_FILE"
-      ./YAMLtecture --in="$dir/configs" --mergeConfig --out=$dir/config.yaml >>"$LOG_FILE" 2>&1
-      echo "" >> "$LOG_FILE"
-      if [ $? -ne 0 ]; then
-          log_entry "$((depth + 1))" "configs" "Error" "no"
-      else
-          log_entry "$((depth + 1))" "configs" "Merged" "no"
-      fi
-  fi
-
-  # Collect all items in the configuration directory except 'queries'
-  local items=()
-  for item in "$dir"/*; do
-    if [ -e "$item" ] && [ "$(basename "$item")" != "queries" ]; then
-      items+=("$item")
-    fi
-  done
-
-  # Check if 'queries' exists to determine if it's the last item
-  local has_queries=0
-  if [ -d "$dir/queries" ]; then
-    has_queries=1
-  fi
-
-  local total=${#items[@]}
-  if [ "$has_queries" -eq 1 ]; then
-    total=$((total + 1))
-  fi
-
-  local count=0
-
-  # Process each item in the configuration directory
-  for item in "${items[@]}"; do
-    count=$((count + 1))
-    local current_is_last="no"
-    if [ "$count" -eq "$total" ]; then
-      current_is_last="yes"
+    # Process the "configs" folder if it exists
+    if [ -d "$dir/configs" ]; then
+        if ! execute_command "./YAMLtecture --in=$dir/configs --mergeConfig --out=$dir/config.yaml" "$((depth + 1))" "configs" "Merged" "no"; then
+            return 1
+        fi
     fi
 
-    local item_name
-    item_name=$(basename "$item")
-
-    case "$item_name" in
-      config.yaml)
-        # Validate the config.yaml
-        echo "./YAMLtecture --validateConfig --configIn=$item" >> "$LOG_FILE"
-        ./YAMLtecture --validateConfig --configIn="$item" >>"$LOG_FILE" 2>&1
-        echo "" >> "$LOG_FILE"
-        if [ $? -ne 0 ]; then
-          log_entry "$((depth + 1))" "config.yaml" "Error" "no"
-        else
-          log_entry "$((depth + 1))" "config.yaml" "Valid" "no"
+    if [ -f "$dir/config.yaml" ]; then
+        if ! execute_command "./YAMLtecture --validateConfig --configIn=$dir/config.yaml" "$((depth + 1))" "config.yaml" "Valid" "no"; then
+            return 1
         fi
-        ;;
-      mermaid.yaml)
-        # Validate and generate mermaid.mmd
-        echo "./YAMLtecture --validateMermaid --mermaidIn=$item" >> "$LOG_FILE"
-        ./YAMLtecture --validateMermaid --mermaidIn="$item" >>"$LOG_FILE" 2>&1
-        echo "" >> "$LOG_FILE"
-        if [ $? -ne 0 ]; then
-          log_entry "$((depth + 1))" "mermaid.yaml" "Error" "no"
-        else
-          log_entry "$((depth + 1))" "mermaid.yaml" "Valid" "no"
-          echo "./YAMLtecture --generateMermaid --configIn=$dir/config.yaml --mermaidIn=$item --out=$dir/mermaid.mmd" >> "$LOG_FILE"
-          ./YAMLtecture --generateMermaid --configIn="$dir/config.yaml" --mermaidIn="$item" --out="$dir/mermaid.mmd" >>"$LOG_FILE" 2>&1
-            echo "" >> "$LOG_FILE"
-          if [ $? -ne 0 ]; then
-            log_entry "$((depth + 1))" "mermaid.mmd" "Error" "no"
-          else
-            log_entry "$((depth + 1))" "mermaid.mmd" "Generated" "no"
-          fi
-        fi
-        ;;
-      *)
-        # Handle other files if necessary
-        ;;
-    esac
-  done
+    fi
 
-  # If 'queries' directory exists, process it
-  if [ "$has_queries" -eq 1 ]; then
-    local is_last_queries="yes" # Assuming 'queries' is the last item
-    process_queries "$dir" "$((depth + 1))"
-  fi
+    # Process mermaid if it exists
+    [ -f "$dir/mermaid.yaml" ] && process_mermaid "$dir" "$((depth + 1))"
+
+    # Process queries if they exist
+    [ -d "$dir/queries" ] && process_queries "$dir" "$((depth + 1))"
 }
 
-# Function to process the example directory
+# Function to process the tests directory
 process_tests_dir() {
   local example_dir="tests"
-  if [ -d "$example_dir" ]; then
-    # Collect top-level directories
-    local dirs=()
-    for dir in "$example_dir"/*/; do
-      [ -d "$dir" ] || continue
-      dirs+=("$dir")
-    done
-
-    local total=${#dirs[@]}
-    local count=0
-
-    for dir in "${dirs[@]}"; do
-      count=$((count + 1))
-      local is_last="no"
-      if [ "$count" -eq "$total" ]; then
-        is_last="yes"
-      fi
-      process_config_dir "$dir" 2 "$is_last"
-    done
-  else
-    echo -e "${RED}Directory 'example' does not exist.${NC}"
-    exit 1
+  if [ ! -d "$example_dir" ]; then
+    echo -e "${RED}Directory 'tests' does not exist.${NC}"
+    FAILURE=1
+    return 1
   fi
+  
+  # Get a list of directories (excluding hidden ones)
+  local dirs=($(find "$example_dir" -maxdepth 1 -mindepth 1 -type d -not -path '*/\.*'))
+  local total=${#dirs[@]}
+  
+  if [ $total -eq 0 ]; then
+    echo -e "${RED}No test directories found.${NC}"
+    FAILURE=1
+    return 1
+  fi
+  
+  local count=0
+  for dir in "${dirs[@]}"; do
+    count=$((count + 1))
+    local is_last="no"
+    [ $count -eq $total ] && is_last="yes"
+    process_config_dir "$dir" 2 "$is_last"
+  done
 }
 
 # Main script execution starts here
 rm -f "$LOG_FILE"
+FAILURE=0
 
 # Compile the Go application
 compile_go_app
@@ -349,5 +294,13 @@ compile_go_app
 # Process the example directory
 process_tests_dir
 
-# Optionally, clean up the binary after processing
+# Print final status
+if [ $FAILURE -eq 1 ]; then
+    echo -e "\n${RED}ERROR: One or more operations failed during execution. Check the log file for details.${NC}"
+    exit 1
+fi
+
+echo -e "\n${GREEN}SUCCESS: All operations completed successfully.${NC}"
+
+# Optional cleanup
 # rm -f YAMLtecture
