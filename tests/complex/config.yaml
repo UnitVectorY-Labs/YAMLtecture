@@ -1,13 +1,19 @@
 nodes:
+    - id: app_foo
+      type: Application
+      parent: cluster
     - id: service_foo
       type: Microservice
-      parent: cluster
+      parent: app_foo
       attributes:
         language: Java
         name: Foo Service
+    - id: app_bar
+      type: Application
+      parent: cluster
     - id: service_bar
       type: Microservice
-      parent: cluster
+      parent: app_bar
       attributes:
         language: Go
         name: Bar Service
@@ -17,13 +23,13 @@ nodes:
         name: Container Hosting
     - id: db_foo
       type: Database
-      parent: cluster
+      parent: app_foo
       attributes:
         database: Valkey
         name: Foo Database
     - id: db_bar
       type: Database
-      parent: cluster
+      parent: app_bar
       attributes:
         database: MariaDB
         name: Bar Database

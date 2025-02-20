@@ -1,13 +1,13 @@
 nodes:
   - id: db_foo
     type: Database
-    parent: cluster
+    parent: app_foo
     attributes:
       name: "Foo Database"
       database: "Valkey"
   - id: db_bar
     type: Database
-    parent: cluster
+    parent: app_bar
     attributes:
       name: "Bar Database"
       database: "MariaDB"
