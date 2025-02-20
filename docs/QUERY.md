@@ -18,9 +18,15 @@ permalink: /query
 
 One core capability of YAMLtecture is the ability to apply a query to a configuration file to filter down to a subset of the nodes and links.  This is useful for taking a single larger definition configuration and applying different queries to filter down to a subset for different use cases.
 
+## Why Query?
+
+The intended use of a YAMLtecture configuration file is that it represents a superset of the overall system with all of the detail represented.  The challenge this provides is that consuming this at full detail as in creating a mermaid flowchart results in too much detail.  Therefore, this information can be selected down with a query.
+
 ## Query Syntax
 
-Operator: `equals`
+Queries are represented as YAML files and apply filters in the form of various operators that can take the source config file and reduce it down into the desired subset.
+
+### Operator: `equals`
 
 ```yaml
 nodes:
@@ -31,7 +37,7 @@ nodes:
         value: "Microservice"
 ```
 
-Operator: `notEquals`
+### Operator: `notEquals`
 
 ```yaml
 nodes:
@@ -42,7 +48,7 @@ nodes:
         value: "Microservice"
 ```
 
-Operator: `and`
+### Operator: `and`
 
 ```yaml
 nodes:
@@ -58,7 +64,7 @@ nodes:
             value: "Service A"
 ```
 
-Operator: `or`
+### Operator: `or`
 
 ```yaml
 nodes:
