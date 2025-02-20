@@ -20,6 +20,12 @@ func (q *Query) Validate() error {
 		return err
 	}
 
+	// Validate the links
+	err = q.Links.validate()
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 

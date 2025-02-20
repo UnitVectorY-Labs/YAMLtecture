@@ -52,6 +52,11 @@ func TestGenerateQuery(t *testing.T) {
 					t.Fatalf("Failed to load query: %v", err)
 				}
 
+				err = query.Validate()
+				if err != nil {
+					t.Fatalf("Failed to validate query: %v", err)
+				}
+
 				output, err := ExecuteQuery(query, config)
 				if err != nil {
 					t.Fatalf("ExecuteQuery returned error: %v", err)
