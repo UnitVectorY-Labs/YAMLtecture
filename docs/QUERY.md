@@ -28,6 +28,8 @@ Queries are represented as YAML files and apply filters in the form of various o
 
 ### Operator: `equals`
 
+Filter matching only nodes where the specified field exactly matches the specified value.
+
 ```yaml
 nodes:
   filters:
@@ -39,6 +41,8 @@ nodes:
 
 ### Operator: `notEquals`
 
+Filter matches only nodes where the specified field is not an exact match to the specified value.
+
 ```yaml
 nodes:
   filters:
@@ -49,6 +53,8 @@ nodes:
 ```
 
 ### Operator: `and`
+
+Filter operation that allows multiple conditions to be combined together.  This is useful for more complex queries.
 
 ```yaml
 nodes:
@@ -65,6 +71,8 @@ nodes:
 ```
 
 ### Operator: `or`
+
+Filter operation that allows multiple conditions to be combined together.  This is useful for more complex queries.
 
 ```yaml
 nodes:
