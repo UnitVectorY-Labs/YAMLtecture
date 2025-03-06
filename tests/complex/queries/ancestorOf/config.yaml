@@ -1,0 +1,9 @@
+nodes:
+    - id: app_bar
+      type: Application
+      parent: cluster
+    - id: cluster
+      type: Infrastructure
+      attributes:
+        name: Container Hosting
+links: []

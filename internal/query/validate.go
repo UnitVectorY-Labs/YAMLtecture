@@ -85,6 +85,7 @@ func (condition *Condition) validate(filterType int) error {
 	// Validate the operation is 'equals' using a switch so it is easy to add more operations later
 	switch condition.Operator {
 	case "equals":
+
 		allowField = true
 		requireField = true
 
@@ -108,6 +109,16 @@ func (condition *Condition) validate(filterType int) error {
 
 		allowCondition = true
 		requireCondition = true
+
+	case "ancestorOf":
+
+		allowValue = true
+		requireValue = true
+
+	case "descendantOf":
+
+		allowValue = true
+		requireValue = true
 
 	default:
 		return fmt.Errorf("invalid operator: %s", condition.Operator)

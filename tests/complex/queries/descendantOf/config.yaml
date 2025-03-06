@@ -1,0 +1,15 @@
+nodes:
+    - id: service_bar
+      type: Microservice
+      attributes:
+        language: Go
+        name: Bar Service
+    - id: db_bar
+      type: Database
+      attributes:
+        database: MariaDB
+        name: Bar Database
+links:
+    - source: service_bar
+      target: db_bar
+      type: DB
