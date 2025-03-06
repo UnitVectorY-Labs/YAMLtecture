@@ -99,6 +99,139 @@ nodes:
             value: "Service B"
 ```
 
+### Operator: `ancestorOf`
+
+Filter operation that selects nodes that are ancestors of the specified node as defined by the `id` field. This includes the parent of the node and that parent's parent, etc.
+
+```yaml
+nodes:
+  filters:
+    - condition:
+        operator: ancestorOf
+        value: "val"
+```
+
+In the following example, the nodes highlighted in green are the ancestors of the node with the id of `val` in red.
+
+
+```mermaid
+graph TD;
+    A(( )):::green
+    A --> B(( )):::green;
+    A --> C(( )):::blue;
+    B --> D(( )):::blue;
+    B --> E((val)):::red;
+    C --> G(( )):::blue;
+    D --> I(( )):::blue;
+    D --> J(( )):::blue;
+    E --> K(( )):::blue;
+    E --> L(( )):::blue;
+    K --> M(( )):::blue;
+
+    classDef green fill:#2ecc71,stroke:#27ae60,stroke-width:2px;
+    classDef blue fill:#3498db,stroke:#2980b9,stroke-width:2px;
+    classDef red fill:#e74c3c,stroke:#c0392b,stroke-width:2px;
+```
+
+### Operator: `descendantOf`
+
+Filter operation that selects nodes that are descendants of the specified node as defined by the `id` field. This includes the children of the node and those children's children, etc.
+
+```yaml
+nodes:
+  filters:
+    - condition:
+        operator: descendantOf
+        value: "val"
+```
+
+In the following example, the nodes highlighted in green are the descendants of the node with the id of `val` in red.
+
+```mermaid
+graph TD;
+    A(( )):::blue
+    A --> B(( )):::blue;
+    A --> C(( )):::blue;
+    B --> D(( )):::blue;
+    B --> E((val)):::red;
+    C --> G(( )):::blue;
+    D --> I(( )):::blue;
+    D --> J(( )):::blue;
+    E --> K(( )):::green;
+    E --> L(( )):::green;
+    K --> M(( )):::green;
+
+    classDef green fill:#2ecc71,stroke:#27ae60,stroke-width:2px;
+    classDef blue fill:#3498db,stroke:#2980b9,stroke-width:2px;
+    classDef red fill:#e74c3c,stroke:#c0392b,stroke-width:2px;
+```
+
+### Operator: `childOf`
+
+Filter operation that selects nodes that are children of the specified node as defined by the `id` field. This includes the direct children of the node.
+
+```yaml
+nodes:
+  filters:
+    - condition:
+        operator: childOf
+        value: "val"
+```
+
+In the following example, the nodes highlighted in green are the children of the node with the id of `val` in red.
+
+```mermaid
+graph TD;
+    A(( )):::blue
+    A --> B(( )):::blue;
+    A --> C(( )):::blue;
+    B --> D(( )):::blue;
+    B --> E((val)):::red;
+    C --> G(( )):::blue;
+    D --> I(( )):::blue;
+    D --> J(( )):::blue;
+    E --> K(( )):::green;
+    E --> L(( )):::green;
+    K --> M(( )):::blue;
+
+    classDef green fill:#2ecc71,stroke:#27ae60,stroke-width:2px;
+    classDef blue fill:#3498db,stroke:#2980b9,stroke-width:2px;
+    classDef red fill:#e74c3c,stroke:#c0392b,stroke-width:2px;
+```
+
+### Operator: `parentOf`
+
+Filter operation that selects nodes that are parents of the specified node as defined by the `id` field. This includes the direct parent of the node.
+
+```yaml
+nodes:
+  filters:
+    - condition:
+        operator: parentOf
+        value: "val"
+```
+
+In the following example, the nodes highlighted in green is the parent of the node with the id of `val` in red.
+
+```mermaid
+graph TD;
+    A(( )):::blue
+    A --> B(( )):::green;
+    A --> C(( )):::blue;
+    B --> D(( )):::blue;
+    B --> E((val)):::red;
+    C --> G(( )):::blue;
+    D --> I(( )):::blue;
+    D --> J(( )):::blue;
+    E --> K(( )):::blue;
+    E --> L(( )):::blue;
+    K --> M(( )):::blue;
+
+    classDef green fill:#2ecc71,stroke:#27ae60,stroke-width:2px;
+    classDef blue fill:#3498db,stroke:#2980b9,stroke-width:2px;
+    classDef red fill:#e74c3c,stroke:#c0392b,stroke-width:2px;
+```
+
 
 ## Link Query Operators
 
