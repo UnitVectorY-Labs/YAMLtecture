@@ -1,9 +1,14 @@
 title: YAMLtecture
 description: "Lightweight CLI tool for generating outputs, including Mermaid diagrams, from YAML-defined system architectures."
 
-remote_theme: just-the-docs/just-the-docs@v0.7.0
+remote_theme: just-the-docs/just-the-docs@v0.10.1
 plugins:
   - jekyll-remote-theme
+
+mermaid:
+  # Version of mermaid library
+  # Pick an available version from https://cdn.jsdelivr.net/npm/mermaid/
+  version: "11.4.1"
 
 # External navigation links
 nav_external_links:
