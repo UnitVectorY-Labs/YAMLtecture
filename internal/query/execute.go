@@ -234,6 +234,10 @@ func nodeMatchesFilter(node configuration.Node, filter Filter, ctx *ConfigContex
 		return isAncestorOf(node.ID, filter.Condition.Value, ctx)
 	case "descendantOf":
 		return isDescendantOf(node.ID, filter.Condition.Value, ctx)
+	case "parentOf":
+		return isParentOf(node.ID, filter.Condition.Value, ctx)
+	case "childOf":
+		return isChildOf(node.ID, filter.Condition.Value, ctx)
 	default:
 		return false, fmt.Errorf("unsupported operator '%s'", filter.Condition.Operator)
 	}
@@ -267,6 +271,38 @@ func getNodeFieldValue(node configuration.Node, field string) (string, error) {
 
 		return "", nil
 	}
+}
+
+// isChildOf checks if nodeID is a child of targetNodeID in the given configuration context.
+// A child is a direct child of the target node.
+func isChildOf(nodeID string, targetNodeID string, ctx *ConfigContext) (bool, error) {
+	// Find the target node
+	_, exists := ctx.NodesById[targetNodeID]
+	if !exists {
+		return false, fmt.Errorf("target node with ID %s not found", targetNodeID)
+	}
+
+	// Check if nodeID is a direct child of targetNodeID
+	for _, childID := range ctx.ChildrenMap[targetNodeID] {
+		if childID == nodeID {
+			return true, nil
+		}
+	}
+
+	// If we get here, nodeID is not a child of targetNodeID
+	return false, nil
+}
+
+// isParentOf checks if nodeID is a direct parent of targetNodeID in the given configuration context.
+func isParentOf(nodeID string, targetNodeID string, ctx *ConfigContext) (bool, error) {
+	// Find the target node
+	targetNode, exists := ctx.NodesById[targetNodeID]
+	if !exists {
+		return false, fmt.Errorf("target node with ID %s not found", targetNodeID)
+	}
+
+	// Check if nodeID is the parent of targetNodeID
+	return targetNode.Parent == nodeID, nil
 }
 
 // isDescendantOf checks if nodeID is a descendant of targetNodeID in the given configuration context.

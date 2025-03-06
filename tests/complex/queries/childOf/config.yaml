@@ -1,0 +1,15 @@
+nodes:
+    - id: service_foo
+      type: Microservice
+      attributes:
+        language: Java
+        name: Foo Service
+    - id: db_foo
+      type: Database
+      attributes:
+        database: Valkey
+        name: Foo Database
+links:
+    - source: service_foo
+      target: db_foo
+      type: DB

@@ -1,0 +1,5 @@
+nodes:
+  filters:
+    - condition:
+        operator: parentOf
+        value: "service_bar"
