@@ -1,0 +1,5 @@
+nodes:
+  filters:
+    - condition:
+        operator: ancestorOf
+        value: "db_bar"

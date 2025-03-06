@@ -6,10 +6,42 @@ import (
 	"github.com/UnitVectorY-Labs/YAMLtecture/internal/configuration"
 )
 
+// ConfigContext holds the configuration with pre-calculated maps for efficient querying
+type ConfigContext struct {
+	Config      *configuration.Config
+	NodesById   map[string]*configuration.Node
+	ChildrenMap map[string][]string // Maps parent node ID to list of child node IDs
+}
+
+// NewConfigContext creates a new ConfigContext with pre-calculated maps for efficient querying
+func NewConfigContext(config *configuration.Config) *ConfigContext {
+	// Create a map for faster node lookups
+	nodesById := make(map[string]*configuration.Node)
+	for i := range config.Nodes {
+		nodesById[config.Nodes[i].ID] = &config.Nodes[i]
+	}
+
+	// Create a map of parent node IDs to their children's IDs
+	childrenMap := make(map[string][]string)
+	for _, node := range config.Nodes {
+		if node.Parent != "" {
+			childrenMap[node.Parent] = append(childrenMap[node.Parent], node.ID)
+		}
+	}
+
+	return &ConfigContext{
+		Config:      config,
+		NodesById:   nodesById,
+		ChildrenMap: childrenMap,
+	}
+}
+
 // ExecuteQuery filters the configuration based on the provided query.
 // It returns a new configuration containing only the nodes and links
 // that match the query conditions.
 func ExecuteQuery(query *Query, config *configuration.Config) (configuration.Config, error) {
+	// Create context with pre-calculated maps for efficient querying
+	ctx := NewConfigContext(config)
 
 	// Prepare a new Config to hold the filtered results
 	filteredConfig := configuration.Config{
@@ -19,7 +51,7 @@ func ExecuteQuery(query *Query, config *configuration.Config) (configuration.Con
 
 	// Iterate over all nodes and apply filters
 	for _, node := range config.Nodes {
-		matchesAllFilters, err := nodeMatchesAllFilters(node, query.Nodes.Filters)
+		matchesAllFilters, err := nodeMatchesAllFilters(node, query.Nodes.Filters, ctx)
 		if err != nil {
 			return configuration.Config{}, fmt.Errorf("error applying filters to node '%s': %w", node.ID, err)
 		}
@@ -147,9 +179,9 @@ func getLinkFieldValue(link configuration.Link, field string) (string, error) {
 }
 
 // nodeMatchesAllFilters checks if a node satisfies all the provided filters.
-func nodeMatchesAllFilters(node configuration.Node, filters []Filter) (bool, error) {
+func nodeMatchesAllFilters(node configuration.Node, filters []Filter, ctx *ConfigContext) (bool, error) {
 	for _, filter := range filters {
-		matches, err := nodeMatchesFilter(node, filter)
+		matches, err := nodeMatchesFilter(node, filter, ctx)
 		if err != nil {
 			return false, err
 		}
@@ -161,7 +193,7 @@ func nodeMatchesAllFilters(node configuration.Node, filters []Filter) (bool, err
 }
 
 // nodeMatchesFilter checks if a node satisfies a single filter condition.
-func nodeMatchesFilter(node configuration.Node, filter Filter) (bool, error) {
+func nodeMatchesFilter(node configuration.Node, filter Filter, ctx *ConfigContext) (bool, error) {
 	// Extract the value of the specified field from the node
 	fieldValue, err := getNodeFieldValue(node, filter.Condition.Field)
 	if err != nil {
@@ -177,7 +209,7 @@ func nodeMatchesFilter(node configuration.Node, filter Filter) (bool, error) {
 	case "and":
 		// Check if all conditions are met
 		for _, condition := range filter.Condition.Conditions {
-			matches, err := nodeMatchesFilter(node, Filter{Condition: condition})
+			matches, err := nodeMatchesFilter(node, Filter{Condition: condition}, ctx)
 			if err != nil {
 				return false, err
 			}
@@ -189,7 +221,7 @@ func nodeMatchesFilter(node configuration.Node, filter Filter) (bool, error) {
 	case "or":
 		// Check if any condition is met
 		for _, condition := range filter.Condition.Conditions {
-			matches, err := nodeMatchesFilter(node, Filter{Condition: condition})
+			matches, err := nodeMatchesFilter(node, Filter{Condition: condition}, ctx)
 			if err != nil {
 				return false, err
 			}
@@ -198,6 +230,14 @@ func nodeMatchesFilter(node configuration.Node, filter Filter) (bool, error) {
 			}
 		}
 		return false, nil
+	case "ancestorOf":
+		return isAncestorOf(node.ID, filter.Condition.Value, ctx)
+	case "descendantOf":
+		return isDescendantOf(node.ID, filter.Condition.Value, ctx)
+	case "parentOf":
+		return isParentOf(node.ID, filter.Condition.Value, ctx)
+	case "childOf":
+		return isChildOf(node.ID, filter.Condition.Value, ctx)
 	default:
 		return false, fmt.Errorf("unsupported operator '%s'", filter.Condition.Operator)
 	}
@@ -231,4 +271,125 @@ func getNodeFieldValue(node configuration.Node, field string) (string, error) {
 
 		return "", nil
 	}
+}
+
+// isChildOf checks if nodeID is a child of targetNodeID in the given configuration context.
+// A child is a direct child of the target node.
+func isChildOf(nodeID string, targetNodeID string, ctx *ConfigContext) (bool, error) {
+	// Find the target node
+	_, exists := ctx.NodesById[targetNodeID]
+	if !exists {
+		return false, fmt.Errorf("target node with ID %s not found", targetNodeID)
+	}
+
+	// Check if nodeID is a direct child of targetNodeID
+	for _, childID := range ctx.ChildrenMap[targetNodeID] {
+		if childID == nodeID {
+			return true, nil
+		}
+	}
+
+	// If we get here, nodeID is not a child of targetNodeID
+	return false, nil
+}
+
+// isParentOf checks if nodeID is a direct parent of targetNodeID in the given configuration context.
+func isParentOf(nodeID string, targetNodeID string, ctx *ConfigContext) (bool, error) {
+	// Find the target node
+	targetNode, exists := ctx.NodesById[targetNodeID]
+	if !exists {
+		return false, fmt.Errorf("target node with ID %s not found", targetNodeID)
+	}
+
+	// Check if nodeID is the parent of targetNodeID
+	return targetNode.Parent == nodeID, nil
+}
+
+// isDescendantOf checks if nodeID is a descendant of targetNodeID in the given configuration context.
+// A descendant is a node in the direct child chain (child, child's child, etc.)
+func isDescendantOf(nodeID string, targetNodeID string, ctx *ConfigContext) (bool, error) {
+	// Find the target node
+	_, exists := ctx.NodesById[targetNodeID]
+	if !exists {
+		return false, fmt.Errorf("target node with ID %s not found", targetNodeID)
+	}
+
+	// Use a stack-based approach to traverse the descendant tree
+	// Start with the children of the target node
+	children, exists := ctx.ChildrenMap[targetNodeID]
+	if !exists {
+		// Target node has no children
+		return false, nil
+	}
+
+	// Check direct children first
+	for _, childID := range children {
+		if childID == nodeID {
+			return true, nil
+		}
+	}
+
+	// If not found in direct children, check deeper descendants
+	for _, childID := range children {
+		// For each child, check if nodeID is in its descendant tree
+		childChildren, hasChildren := ctx.ChildrenMap[childID]
+		if !hasChildren {
+			continue
+		}
+
+		// Create a stack for depth-first traversal
+		stack := append([]string{}, childChildren...)
+
+		// Process the stack
+		for len(stack) > 0 {
+			// Pop the last item from the stack
+			current := stack[len(stack)-1]
+			stack = stack[:len(stack)-1]
+
+			// Check if this is the node we're looking for
+			if current == nodeID {
+				return true, nil
+			}
+
+			// Add its children to the stack
+			if descendants, hasDescendants := ctx.ChildrenMap[current]; hasDescendants {
+				stack = append(stack, descendants...)
+			}
+		}
+	}
+
+	// If we get here, nodeID is not a descendant of targetNodeID
+	return false, nil
+}
+
+// isAncestorOf checks if nodeID is an ancestor of targetNodeID in the given configuration context.
+// An ancestor is a node in the direct parent chain (parent, parent's parent, etc.)
+func isAncestorOf(nodeID string, targetNodeID string, ctx *ConfigContext) (bool, error) {
+	// Find the target node
+	targetNode, exists := ctx.NodesById[targetNodeID]
+	if !exists {
+		return false, fmt.Errorf("target node with ID %s not found", targetNodeID)
+	}
+
+	// Start checking with the direct parent
+	currentParentID := targetNode.Parent
+
+	// Traverse up the ancestor chain
+	for currentParentID != "" {
+		// If this ancestor matches the nodeID we're checking, return true
+		if currentParentID == nodeID {
+			return true, nil
+		}
+
+		// Move up to the next parent
+		parent, exists := ctx.NodesById[currentParentID]
+		if !exists {
+			// If parent reference doesn't exist in the nodes, stop traversal
+			break
+		}
+		currentParentID = parent.Parent
+	}
+
+	// If we get here, nodeID is not an ancestor of targetNodeID
+	return false, nil
 }

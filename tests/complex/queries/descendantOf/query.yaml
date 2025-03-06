@@ -1,0 +1,5 @@
+nodes:
+  filters:
+    - condition:
+        operator: descendantOf
+        value: "app_bar"

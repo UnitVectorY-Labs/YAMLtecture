@@ -1,0 +1,4 @@
+nodes:
+    - id: app_bar
+      type: Application
+links: []

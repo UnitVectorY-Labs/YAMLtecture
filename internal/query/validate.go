@@ -85,32 +85,46 @@ func (condition *Condition) validate(filterType int) error {
 	// Validate the operation is 'equals' using a switch so it is easy to add more operations later
 	switch condition.Operator {
 	case "equals":
-		allowField = true
 		requireField = true
-
-		allowValue = true
 		requireValue = true
 
 	case "notEquals":
-
-		allowField = true
 		requireField = true
-
-		allowValue = true
 		requireValue = true
 
 	case "and":
-
-		allowCondition = true
 		requireCondition = true
 
 	case "or":
-
-		allowCondition = true
 		requireCondition = true
+
+	case "ancestorOf":
+		requireValue = true
+
+	case "descendantOf":
+		requireValue = true
+
+	case "childOf":
+		requireValue = true
+
+	case "parentOf":
+		requireValue = true
 
 	default:
 		return fmt.Errorf("invalid operator: %s", condition.Operator)
+	}
+
+	// Set the allow and require flags based on the filter type
+	if requireValue {
+		allowValue = true
+	}
+
+	if requireField {
+		allowField = true
+	}
+
+	if requireCondition {
+		allowCondition = true
 	}
 
 	if requireField && condition.Field == "" {
