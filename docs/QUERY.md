@@ -26,6 +26,17 @@ The intended use of a YAMLtecture configuration file is that it represents a sup
 
 Queries are represented as YAML files and apply filters in the form of various operators that can take the source config file and reduce it down into the desired subset.
 
+## Node Query Operators
+
+Queries applied to nodes are used to select a subset of nodes based on the specified conditions. Links that have a source or target node that is not included in the query will not be included in the output.
+
+The fields that can be used in a node query are:
+
+- `type`
+- `id`
+- `parent`
+- `attribute.*`
+
 ### Operator: `equals`
 
 Filter matching only nodes where the specified field exactly matches the specified value.
@@ -86,4 +97,79 @@ nodes:
           - field: attribute.name
             operator: equals
             value: "Service B"
+```
+
+
+## Link Query Operators
+
+Queries applied to links are used to select a subset of links based on the specified conditions. If all links are removed from a node, that node will still be included in the output.
+
+
+The fields that can be used in a node query are:
+
+- `type`
+- `source`
+- `target`
+- `attribute.*`
+
+### Operator: `equals`
+
+Filter matching only links where the specified field exactly matches the specified value.
+
+```yaml
+links:
+  filters:
+    - condition:
+        field: type
+        operator: equals
+        value: "Uses"
+```
+
+### Operator: `notEquals`
+
+Filter matches only links where the specified field is not an exact match to the specified value.
+
+```yaml
+links:
+  filters:
+    - condition:
+        field: type
+        operator: notEquals
+        value: "Uses"
+```
+
+### Operator: `and`
+
+Filter operation that allows multiple conditions to be combined together.  This is useful for more complex queries.
+
+```yaml
+links:
+  filters:
+    - condition:
+        operator: and
+        conditions:
+          - field: type
+            operator: equals
+            value: "Uses"
+          - field: attribute.communication
+            operator: equals
+            value: "Asynchronous"
+```
+
+### Operator: `or`
+
+Filter operation that allows multiple conditions to be combined together.  This is useful for more complex queries.
+
+```yaml
+links:
+  filters:
+    - condition:
+        operator: or
+        conditions:
+          - field: attribute.communication
+            operator: equals
+            value: "Asynchronous"
+          - field: attribute.communication
+            operator: equals
+            value: "Synchronous"
 ```

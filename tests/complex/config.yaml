@@ -36,7 +36,7 @@ nodes:
 links:
     - source: service_foo
       target: service_bar
-      type: API
+      type: Uses
       attributes:
         payload: example
     - source: service_foo
