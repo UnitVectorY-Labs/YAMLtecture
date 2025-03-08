@@ -1,6 +1,6 @@
 module github.com/UnitVectorY-Labs/YAMLtecture
 
-go 1.24.0
+go 1.24.1
 
 require (
 	golang.org/x/term v0.29.0
