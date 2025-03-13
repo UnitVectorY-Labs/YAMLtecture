@@ -47,14 +47,12 @@ func main() {
 
 		config, err := c.ParseYAML(content)
 		if err != nil {
-			fmt.Fprintf(os.Stderr, "Error parsing YAML: %v\n", err)
-			os.Exit(1)
+			printError("Error parsing YAML", err)
 		}
 
 		err = config.Validate()
 		if err != nil {
-			fmt.Fprintf(os.Stderr, "Error validating configuration: %v\n", err)
-			os.Exit(1)
+			printError("Error validating configuration", err)
 		}
 
 	} else if *validateQueryFlag {
@@ -63,33 +61,28 @@ func main() {
 
 		query, err := q.ParseQuery(content)
 		if err != nil {
-			fmt.Fprintf(os.Stderr, "Error loading query: %v\n", err)
-			os.Exit(1)
+			printError("Error loading query", err)
 		}
 
 		err = query.Validate()
 		if err != nil {
-			fmt.Fprintf(os.Stderr, "Error validating query: %v\n", err)
-			os.Exit(1)
+			printError("Error validating query", err)
 		}
 
 	} else if *mergeConfigFlag {
 		// Validate that inFlag was set and is a folder
 		if *inFlag == "" {
-			fmt.Fprintf(os.Stderr, "Error: No input folder specified\n")
-			os.Exit(1)
+			printError("No input folder specified", nil)
 		}
 
 		config, err := c.LoadFolder(*inFlag)
 		if err != nil {
-			fmt.Fprintf(os.Stderr, "Error loading folder: %v\n", err)
-			os.Exit(1)
+			printError("Error loading folder", err)
 		}
 
 		err = config.Validate()
 		if err != nil {
-			fmt.Fprintf(os.Stderr, "Error validating configuration: %v\n", err)
-			os.Exit(1)
+			printError("Error validating configuration", err)
 		}
 
 		writeOutput(config.YamlString(), *outFlag)
@@ -100,14 +93,12 @@ func main() {
 
 		mermaid, err := m.ParseYAML(content)
 		if err != nil {
-			fmt.Fprintf(os.Stderr, "Error parsing YAML: %v\n", err)
-			os.Exit(1)
+			printError("Error parsing YAML", err)
 		}
 
 		err = mermaid.Validate()
 		if err != nil {
-			fmt.Fprintf(os.Stderr, "Error validating mermaid: %v\n", err)
-			os.Exit(1)
+			printError("Error validating mermaid", err)
 		}
 
 	} else if *executeQueryFlag {
@@ -117,32 +108,27 @@ func main() {
 
 		config, err := c.ParseYAML(configContent)
 		if err != nil {
-			fmt.Fprintf(os.Stderr, "Error parsing YAML: %v\n", err)
-			os.Exit(1)
+			printError("Error parsing YAML", err)
 		}
 
 		err = config.Validate()
 		if err != nil {
-			fmt.Fprintf(os.Stderr, "Error validating configuration: %v\n", err)
-			os.Exit(1)
+			printError("Error validating configuration", err)
 		}
 
 		query, err := q.ParseQuery(queryContent)
 		if err != nil {
-			fmt.Fprintf(os.Stderr, "Error loading query: %v\n", err)
-			os.Exit(1)
+			printError("Error loading query", err)
 		}
 
 		err = query.Validate()
 		if err != nil {
-			fmt.Fprintf(os.Stderr, "Error validating query: %v\n", err)
-			os.Exit(1)
+			printError("Error validating query", err)
 		}
 
 		result, err := q.ExecuteQuery(query, config)
 		if err != nil {
-			fmt.Fprintf(os.Stderr, "Error executing query: %v\n", err)
-			os.Exit(1)
+			printError("Error executing query", err)
 		}
 
 		writeOutput(result.YamlString(), *outFlag)
@@ -154,40 +140,34 @@ func main() {
 
 		config, err := c.ParseYAML(queryContent)
 		if err != nil {
-			fmt.Fprintf(os.Stderr, "Error parsing YAML: %v\n", err)
-			os.Exit(1)
+			printError("Error parsing YAML", err)
 		}
 
 		err = config.Validate()
 		if err != nil {
-			fmt.Fprintf(os.Stderr, "Error validating configuration: %v\n", err)
-			os.Exit(1)
+			printError("Error validating configuration", err)
 		}
 
 		mermaid, err := m.ParseYAML(mermaidContent)
 		if err != nil {
-			fmt.Fprintf(os.Stderr, "Error parsing YAML: %v\n", err)
-			os.Exit(1)
+			printError("Error parsing YAML", err)
 		}
 
 		err = mermaid.Validate()
 		if err != nil {
-			fmt.Fprintf(os.Stderr, "Error validating mermaid: %v\n", err)
-			os.Exit(1)
+			printError("Error validating mermaid", err)
 		}
 
 		mermaidDiagram, err := m.GenerateMermaid(config, mermaid)
 		if err != nil {
-			fmt.Fprintf(os.Stderr, "Error generating Mermaid diagram: %v\n", err)
-			os.Exit(1)
+			printError("Error generating Mermaid diagram", err)
 		}
 
 		writeOutput(mermaidDiagram, *outFlag)
 
 	} else {
 		// Write error to error output
-		fmt.Fprintf(os.Stderr, "Error: No command specified\n")
-		os.Exit(1)
+		printError("No command specified", nil)
 	}
 }
 
@@ -196,8 +176,7 @@ func writeOutput(content string, outFlag string) {
 	if outFlag != "" {
 		err := os.WriteFile(outFlag, []byte(content), 0644)
 		if err != nil {
-			fmt.Fprintf(os.Stderr, "Error writing to file %s: %v\n", outFlag, err)
-			os.Exit(1)
+			printError(fmt.Sprintf("Error writing to file %s", outFlag), err)
 		}
 	} else {
 		fmt.Println(content)
@@ -210,35 +189,30 @@ func readFileContent(specificFlag string, allowGenericFlag bool, genericFlag str
 		// Read from the specific flag first
 		content, err := os.ReadFile(specificFlag)
 		if err != nil {
-			fmt.Fprintf(os.Stderr, "Error reading file %s: %v\n", specificFlag, err)
-			os.Exit(1)
+			printError(fmt.Sprintf("Error reading file %s", specificFlag), err)
 		}
 		return string(content)
 	} else if allowGenericFlag && genericFlag != "" {
 		content, err := os.ReadFile(genericFlag)
 		if err != nil {
-			fmt.Fprintf(os.Stderr, "Error reading file %s: %v\n", genericFlag, err)
-			os.Exit(1)
+			printError(fmt.Sprintf("Error reading file %s", genericFlag), err)
 		}
 		return string(content)
 	} else if allowStdin {
 		if !term.IsTerminal(int(os.Stdin.Fd())) {
 			content, err := io.ReadAll(os.Stdin)
 			if err != nil {
-				fmt.Fprintf(os.Stderr, "Error reading from STDIN: %v\n", err)
-				os.Exit(1)
+				printError("Error reading from STDIN", err)
 			}
 			return string(content)
 		} else {
-			fmt.Fprintf(os.Stderr, "Error: No input provided via STDIN\n")
-			os.Exit(1)
+			printError("No input provided via STDIN", nil)
 			return ""
 		}
 	} else if defaultValue != "" {
 		return defaultValue
 	} else {
-		fmt.Fprintf(os.Stderr, "Error: No input file specified and reading from STDIN is not allowed\n")
-		os.Exit(1)
+		printError("No input file specified and reading from STDIN is not allowed", nil)
 		return ""
 	}
 }
@@ -251,7 +225,17 @@ func checkMultipleCommands(commands ...bool) {
 		}
 	}
 	if count > 1 {
-		fmt.Fprintf(os.Stderr, "Error: Multiple commands specified\n")
-		os.Exit(1)
+		printError("Multiple commands specified", nil)
 	}
+}
+
+// printError prints error message to stderr and exits with code 1
+func printError(message string, err error) {
+	fmt.Fprintf(os.Stderr, "YAMLtecture\n")
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Error: %s: %v\n", message, err)
+	} else {
+		fmt.Fprintf(os.Stderr, "Error: %s\n", message)
+	}
+	os.Exit(1)
 }
