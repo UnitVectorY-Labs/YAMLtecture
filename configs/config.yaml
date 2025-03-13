@@ -1,5 +1,0 @@
-nodes:
-  - id: cluster
-    type: Infrastructure
-    attributes:
-      name: "Container Hosting"
