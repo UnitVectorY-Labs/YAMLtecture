@@ -47,6 +47,11 @@ func TestGenerateMermaid(t *testing.T) {
 					t.Fatalf("Failed to load mermaid config: %v", err)
 				}
 
+				err = mermaidConfig.Validate()
+				if err != nil {
+					t.Fatalf("Mermaid config validation failed: %v", err)
+				}
+
 				expectedBytes, err := os.ReadFile(mermaidPath)
 				if err != nil {
 					t.Fatalf("Failed to read Mermaid file: %v", err)
