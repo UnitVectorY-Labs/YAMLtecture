@@ -1,6 +1,10 @@
 package mermaid
 
-import "fmt"
+import (
+	"fmt"
+
+	"github.com/UnitVectorY-Labs/YAMLtecture/internal/common"
+)
 
 // Validate checks if the mermaid is valid.
 func (m *Mermaid) Validate() error {
@@ -14,6 +18,15 @@ func (m *Mermaid) Validate() error {
 	case "LR":
 	default:
 		return fmt.Errorf("invalid direction: %s", m.Direction)
+	}
+
+	// Validate the node label is valid
+	if m.NodeLabel != "" {
+		// Perform same validation as attribute values
+		err := common.IsValidValue(m.NodeLabel, "nodeLabel")
+		if err != nil {
+			return err
+		}
 	}
 
 	return nil
