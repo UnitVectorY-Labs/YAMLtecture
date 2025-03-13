@@ -1,12 +1,12 @@
-flowchart TD
+flowchart LR
     %% Nodes
     app_bar
     app_foo
-    cluster
-    db_bar
-    db_foo
-    service_bar
-    service_foo
+    cluster[Container Hosting]
+    db_bar[Bar Database]
+    db_foo[Foo Database]
+    service_bar[Bar Service]
+    service_foo[Foo Service]
 
     %% Links
     service_bar -->|DB| db_bar

@@ -9,7 +9,10 @@ import (
 )
 
 type Mermaid struct {
+	// The direction of the flowchart (TB, TD, BT, RL, LR)
 	Direction string `yaml:"direction"`
+	// The attribute value to use as the node label if set
+	NodeLabel string `yaml:"nodeLabel"`
 }
 
 // GenerateMermaid creates a Mermaid diagram based on the links and includes all nodes.
@@ -27,9 +30,20 @@ func GenerateMermaid(config *configuration.Config, setting *Mermaid) (string, er
 	// Add all of the nodes
 	for _, node := range config.Nodes {
 		id := node.ID
-		// Represent as a standalone node
-		line := fmt.Sprintf("    %s\n", id)
-		mermaid.WriteString(line)
+
+		if setting.NodeLabel == "" {
+			// Represent as a standalone node with no label
+			mermaid.WriteString(fmt.Sprintf("    %s\n", id))
+		} else {
+			// Try to get the specified attribute value
+			if val, ok := node.Attributes[setting.NodeLabel].(string); ok && val != "" {
+				// Attribute exists and has a value - show node with label
+				mermaid.WriteString(fmt.Sprintf("    %s[%s]\n", id, sanitizeLabel(val)))
+			} else {
+				// Attribute doesn't exist or is empty - show just the node
+				mermaid.WriteString(fmt.Sprintf("    %s\n", id))
+			}
+		}
 	}
 
 	mermaid.WriteString("\n")

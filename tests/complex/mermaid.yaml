@@ -1,1 +1,2 @@
-direction: "TD"
+direction: "LR"
+nodeLabel: "name"
