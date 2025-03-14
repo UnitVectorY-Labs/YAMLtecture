@@ -92,6 +92,9 @@ func (condition *Condition) validate(filterType int) error {
 		requireField = true
 		requireValue = true
 
+	case "exists":
+		requireField = true
+
 	case "and":
 		requireCondition = true
 

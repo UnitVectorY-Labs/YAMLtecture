@@ -1,0 +1,12 @@
+nodes:
+    - id: db_foo
+      type: Database
+      attributes:
+        database: Valkey
+        name: Foo Database
+    - id: db_bar
+      type: Database
+      attributes:
+        database: MariaDB
+        name: Bar Database
+links: []
