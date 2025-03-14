@@ -63,6 +63,18 @@ nodes:
         value: "Microservice"
 ```
 
+### Operator: `exists`
+
+Filter matches only nodes where the specified field exists. This is intended to be used with `attribute.*` fields but can be used with any field even fields that are mandatory where it has no effect.
+
+```yaml
+nodes:
+  filters:
+    - condition:
+        field: attribute.name
+        operator: exists
+```
+
 ### Operator: `and`
 
 Filter operation that allows multiple conditions to be combined together.  This is useful for more complex queries.

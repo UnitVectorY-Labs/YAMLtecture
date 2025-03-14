@@ -1,0 +1,5 @@
+nodes:
+  filters:
+    - condition:
+        operator: exists
+        field: "attribute.database"

@@ -206,6 +206,27 @@ func nodeMatchesFilter(node configuration.Node, filter Filter, ctx *ConfigContex
 		return fieldValue == filter.Condition.Value, nil
 	case "notEquals":
 		return fieldValue != filter.Condition.Value, nil
+	case "exists":
+		switch filter.Condition.Field {
+		case "id":
+			return node.ID != "", nil
+		case "type":
+			return node.Type != "", nil
+		case "parent":
+			return node.Parent != "", nil
+		default:
+			field := filter.Condition.Field
+
+			// Check in Attributes, if 'attribute.' prefix remove it and look up attribute
+			if len(field) > 10 && field[:10] == "attribute." {
+				field = field[10:]
+			} else {
+				return false, nil
+			}
+
+			_, exists := node.Attributes[field]
+			return exists, nil
+		}
 	case "and":
 		// Check if all conditions are met
 		for _, condition := range filter.Condition.Conditions {
