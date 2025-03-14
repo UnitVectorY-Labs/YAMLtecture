@@ -31,7 +31,7 @@ An optional setting YAML file can be provided with the `--mermaidIn` flag. This 
 - `direction` - The direction of the flowchart
 - `nodeLabel` - The attribute to use as the node label
 
-## Setting Attributes
+### Direction
 
 The `direction` setting can be set to one of the following values:
 
@@ -45,7 +45,7 @@ The `direction` setting can be set to one of the following values:
 direction: "LR"
 ```
 
-## Node Label
+### Node Label
 
 The `nodeLabel` attribute can be set to the name of the attribute that is set for a node that will be applied as the name of the node in the Mermaid flowchart. For example, using the "name" attribute allows the name of the node to be set to override `id` which is used by default.
 
