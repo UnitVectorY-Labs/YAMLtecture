@@ -5,6 +5,7 @@ import (
 	"sort"
 	"strings"
 
+	"github.com/UnitVectorY-Labs/YAMLtecture/internal/common"
 	"github.com/UnitVectorY-Labs/YAMLtecture/internal/configuration"
 	query "github.com/UnitVectorY-Labs/YAMLtecture/internal/query"
 )
@@ -68,7 +69,7 @@ func GenerateMermaid(config *configuration.Config, setting *Mermaid) (string, er
 		if setting.NodeLabel != "" {
 			if node, ok := nodeLookup[id]; ok {
 				if val, ok := node.Attributes[setting.NodeLabel].(string); ok && val != "" {
-					label = sanitizeLabel(val)
+					label = common.SanitizeLabel(val)
 				}
 			}
 		}
@@ -145,7 +146,7 @@ func GenerateMermaid(config *configuration.Config, setting *Mermaid) (string, er
 			node := nodeLookup[nid]
 			if setting.NodeLabel != "" {
 				if val, ok := node.Attributes[setting.NodeLabel].(string); ok && val != "" {
-					mermaid.WriteString(fmt.Sprintf("%s    %s[%s]\n", indent, nid, sanitizeLabel(val)))
+					mermaid.WriteString(fmt.Sprintf("%s    %s[%s]\n", indent, nid, common.SanitizeLabel(val)))
 					continue
 				}
 			}
@@ -170,7 +171,7 @@ func GenerateMermaid(config *configuration.Config, setting *Mermaid) (string, er
 		node := nodeLookup[nid]
 		if setting.NodeLabel != "" {
 			if val, ok := node.Attributes[setting.NodeLabel].(string); ok && val != "" {
-				mermaid.WriteString(fmt.Sprintf("    %s[%s]\n", nid, sanitizeLabel(val)))
+				mermaid.WriteString(fmt.Sprintf("    %s[%s]\n", nid, common.SanitizeLabel(val)))
 				continue
 			}
 		}
