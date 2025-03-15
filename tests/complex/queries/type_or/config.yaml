@@ -1,0 +1,33 @@
+nodes:
+    - id: service_foo
+      type: Microservice
+      attributes:
+        language: Java
+        name: Foo Service
+    - id: service_bar
+      type: Microservice
+      attributes:
+        language: Go
+        name: Bar Service
+    - id: db_foo
+      type: Database
+      attributes:
+        database: Valkey
+        name: Foo Database
+    - id: db_bar
+      type: Database
+      attributes:
+        database: MariaDB
+        name: Bar Database
+links:
+    - source: service_foo
+      target: service_bar
+      type: Uses
+      attributes:
+        payload: example
+    - source: service_foo
+      target: db_foo
+      type: DB
+    - source: service_bar
+      target: db_bar
+      type: DB

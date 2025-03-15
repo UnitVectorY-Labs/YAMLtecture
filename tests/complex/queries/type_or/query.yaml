@@ -1,0 +1,11 @@
+nodes:
+  filters:
+    - condition:
+        operator: or
+        conditions:
+          - field: type
+            operator: equals
+            value: "Microservice"
+          - field: type
+            operator: equals
+            value: "Database"
