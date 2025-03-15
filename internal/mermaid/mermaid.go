@@ -6,65 +6,188 @@ import (
 	"strings"
 
 	"github.com/UnitVectorY-Labs/YAMLtecture/internal/configuration"
+	query "github.com/UnitVectorY-Labs/YAMLtecture/internal/query"
 )
 
+// Mermaid contains the settings for generating the diagram.
 type Mermaid struct {
 	// The direction of the flowchart (TB, TD, BT, RL, LR)
 	Direction string `yaml:"direction"`
-	// The attribute value to use as the node label if set
+	// The attribute to use as the node label (if set)
 	NodeLabel string `yaml:"nodeLabel"`
+	// The query to identify nodes to treat as subgraphs (explicit containers)
+	SubgraphNodes query.Nodes `yaml:"subgraphNodes,omitempty"`
 }
 
-// GenerateMermaid creates a Mermaid diagram based on the links and includes all nodes.
+// SubgraphContainer holds a subgraph’s details, its nested explicit subgraphs,
+// and any non‐explicit (leaf) node IDs that should be rendered inside it.
+type subgraphContainer struct {
+	ID        string
+	Label     string // optional label if available
+	Subgraphs []*subgraphContainer
+	Nodes     []string // non‐explicit node IDs that fall under this container
+}
+
+// GenerateMermaid creates a Mermaid diagram from the config and mermaid settings.
+// When a subgraph query is provided, nodes that have a parent will be placed
+// inside the nearest explicit (query–matched) ancestor.
 func GenerateMermaid(config *configuration.Config, setting *Mermaid) (string, error) {
 	var mermaid strings.Builder
-	mermaid.WriteString(fmt.Sprintf("flowchart %s\n", setting.Direction))
 
+	// Write the header.
+	mermaid.WriteString(fmt.Sprintf("flowchart %s\n", setting.Direction))
 	mermaid.WriteString("    %% Nodes\n")
 
-	// Sort nodes by ID
-	sort.Slice(config.Nodes, func(i, j int) bool {
-		return config.Nodes[i].ID < config.Nodes[j].ID
-	})
-
-	// Add all of the nodes
+	// Build a lookup for nodes and a parent map.
+	nodeLookup := make(map[string]configuration.Node)
+	parentMap := make(map[string]string)
 	for _, node := range config.Nodes {
-		id := node.ID
+		nodeLookup[node.ID] = node
+		parentMap[node.ID] = node.Parent
+	}
 
-		if setting.NodeLabel == "" {
-			// Represent as a standalone node with no label
-			mermaid.WriteString(fmt.Sprintf("    %s\n", id))
-		} else {
-			// Try to get the specified attribute value
-			if val, ok := node.Attributes[setting.NodeLabel].(string); ok && val != "" {
-				// Attribute exists and has a value - show node with label
-				mermaid.WriteString(fmt.Sprintf("    %s[%s]\n", id, sanitizeLabel(val)))
-			} else {
-				// Attribute doesn't exist or is empty - show just the node
-				mermaid.WriteString(fmt.Sprintf("    %s\n", id))
-			}
+	// Determine which nodes are "explicit" subgraphs based on the query.
+	explicit := make(map[string]bool)
+	if len(setting.SubgraphNodes.Filters) > 0 {
+		syntheticQuery := query.Query{
+			Nodes: setting.SubgraphNodes,
+		}
+		subgraphConfig, err := query.ExecuteQuery(&syntheticQuery, config)
+		if err != nil {
+			return "", fmt.Errorf("error executing subgraph query: %v", err)
+		}
+		for _, node := range subgraphConfig.Nodes {
+			explicit[node.ID] = true
 		}
 	}
 
+	// Build explicit subgraph containers.
+	containerMap := make(map[string]*subgraphContainer)
+	for id := range explicit {
+		label := ""
+		if setting.NodeLabel != "" {
+			if node, ok := nodeLookup[id]; ok {
+				if val, ok := node.Attributes[setting.NodeLabel].(string); ok && val != "" {
+					label = sanitizeLabel(val)
+				}
+			}
+		}
+		containerMap[id] = &subgraphContainer{
+			ID:        id,
+			Label:     label,
+			Subgraphs: []*subgraphContainer{},
+			Nodes:     []string{},
+		}
+	}
+
+	// Helper: find the nearest explicit ancestor given a starting parent id.
+	findExplicitAncestor := func(start string) string {
+		cur := start
+		for cur != "" {
+			if explicit[cur] {
+				return cur
+			}
+			cur = parentMap[cur]
+		}
+		return ""
+	}
+
+	// Lists for top-level explicit containers and standalone nodes.
+	var topLevelExplicit []*subgraphContainer
+	var topLevelNodes []string
+
+	// Process non-explicit nodes: if they have a parent with an explicit container,
+	// add them there; otherwise, treat them as top-level.
+	for _, node := range config.Nodes {
+		if explicit[node.ID] {
+			continue // explicit nodes will be processed later
+		}
+		if node.Parent != "" {
+			ancestor := findExplicitAncestor(node.Parent)
+			if ancestor != "" {
+				containerMap[ancestor].Nodes = append(containerMap[ancestor].Nodes, node.ID)
+				continue
+			}
+		}
+		topLevelNodes = append(topLevelNodes, node.ID)
+	}
+
+	// Process explicit nodes: nest them if their parent chain includes an explicit container.
+	for id := range explicit {
+		node := nodeLookup[id]
+		if node.Parent != "" {
+			ancestor := findExplicitAncestor(node.Parent)
+			if ancestor != "" {
+				containerMap[ancestor].Subgraphs = append(containerMap[ancestor].Subgraphs, containerMap[id])
+				continue
+			}
+		}
+		topLevelExplicit = append(topLevelExplicit, containerMap[id])
+	}
+
+	// Sort top-level explicit containers and standalone nodes for deterministic output.
+	sort.Slice(topLevelExplicit, func(i, j int) bool {
+		return topLevelExplicit[i].ID < topLevelExplicit[j].ID
+	})
+	sort.Strings(topLevelNodes)
+
+	// Recursive helper to output an explicit container.
+	var outputContainer func(cont *subgraphContainer, indent string)
+	outputContainer = func(cont *subgraphContainer, indent string) {
+		mermaid.WriteString(fmt.Sprintf("%ssubgraph %s\n", indent, cont.ID))
+		// If a label is available, output it.
+		if cont.Label != "" {
+			mermaid.WriteString(fmt.Sprintf("%s    %s\n", indent, cont.Label))
+		}
+		// Output contained non-explicit nodes.
+		sort.Strings(cont.Nodes)
+		for _, nid := range cont.Nodes {
+			node := nodeLookup[nid]
+			if setting.NodeLabel != "" {
+				if val, ok := node.Attributes[setting.NodeLabel].(string); ok && val != "" {
+					mermaid.WriteString(fmt.Sprintf("%s    %s[%s]\n", indent, nid, sanitizeLabel(val)))
+					continue
+				}
+			}
+			mermaid.WriteString(fmt.Sprintf("%s    %s\n", indent, nid))
+		}
+		// Output nested explicit containers.
+		sort.Slice(cont.Subgraphs, func(i, j int) bool {
+			return cont.Subgraphs[i].ID < cont.Subgraphs[j].ID
+		})
+		for _, sub := range cont.Subgraphs {
+			outputContainer(sub, indent+"    ")
+		}
+		mermaid.WriteString(fmt.Sprintf("%send\n", indent))
+	}
+
+	// Output all top-level explicit containers.
+	for _, cont := range topLevelExplicit {
+		outputContainer(cont, "    ")
+	}
+	// Output remaining top-level nodes.
+	for _, nid := range topLevelNodes {
+		node := nodeLookup[nid]
+		if setting.NodeLabel != "" {
+			if val, ok := node.Attributes[setting.NodeLabel].(string); ok && val != "" {
+				mermaid.WriteString(fmt.Sprintf("    %s[%s]\n", nid, sanitizeLabel(val)))
+				continue
+			}
+		}
+		mermaid.WriteString(fmt.Sprintf("    %s\n", nid))
+	}
+
+	// Output the links.
 	mermaid.WriteString("\n")
 	mermaid.WriteString("    %% Links\n")
-
-	// Sort links by source + target
 	sort.Slice(config.Links, func(i, j int) bool {
 		if config.Links[i].Source == config.Links[j].Source {
 			return config.Links[i].Target < config.Links[j].Target
 		}
 		return config.Links[i].Source < config.Links[j].Source
 	})
-
-	// Add all of the links
 	for _, rel := range config.Links {
-		source := rel.Source
-		target := rel.Target
-		label := rel.Type
-
-		// Mermaid syntax: source -->|label| target
-		line := fmt.Sprintf("    %s -->|%s| %s\n", source, label, target)
+		line := fmt.Sprintf("    %s -->|%s| %s\n", rel.Source, rel.Type, rel.Target)
 		mermaid.WriteString(line)
 	}
 

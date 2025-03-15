@@ -1,0 +1,17 @@
+flowchart TD
+    %% Nodes
+    subgraph cluster
+        subgraph app_bar
+            db_bar
+            service_bar
+        end
+        subgraph app_foo
+            db_foo
+            service_foo
+        end
+    end
+
+    %% Links
+    service_bar -->|DB| db_bar
+    service_foo -->|DB| db_foo
+    service_foo -->|Uses| service_bar

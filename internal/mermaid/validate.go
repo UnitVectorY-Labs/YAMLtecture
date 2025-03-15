@@ -29,5 +29,11 @@ func (m *Mermaid) Validate() error {
 		}
 	}
 
+	// Validate the subgraph nodes are valid
+	err := m.SubgraphNodes.Validate()
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
