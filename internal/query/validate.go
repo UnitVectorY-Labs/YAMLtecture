@@ -15,7 +15,7 @@ const (
 func (q *Query) Validate() error {
 
 	// Validate the nodes
-	err := q.Nodes.validate()
+	err := q.Nodes.Validate()
 	if err != nil {
 		return err
 	}
@@ -30,7 +30,7 @@ func (q *Query) Validate() error {
 }
 
 // Validate checks if the nodes are valid.
-func (nodes *Nodes) validate() error {
+func (nodes *Nodes) Validate() error {
 
 	// Validate the filters
 	for _, filter := range nodes.Filters {

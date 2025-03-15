@@ -30,6 +30,9 @@ An optional setting YAML file can be provided with the `--mermaidIn` flag. This 
 
 - `direction` - The direction of the flowchart
 - `nodeLabel` - The attribute to use as the node label
+- `subgraphNodes` - The attribute to filter to identify nodes that will be used as subgraphs
+
+All settings are optional but to generate a configuration file must be specified, even if it is empty.
 
 ### Direction
 
@@ -51,4 +54,17 @@ The `nodeLabel` attribute can be set to the name of the attribute that is set fo
 
 ```yaml
 nodeLabel: "name"
+```
+
+### Subgraph Nodes
+
+The `subgraphNodes` attribute uses the same syntax as a query but instead of selecting the nodes to be include, it selects the nodes that will be used as subgraphs. For example, the following setting will create subgraphs for all nodes that have a `type` attribute set to `Application`.
+
+```yaml
+subgraphNodes:
+  filters:
+    - condition:
+        field: type
+        operator: equals
+        value: "Application"
 ```

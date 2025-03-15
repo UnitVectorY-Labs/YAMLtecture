@@ -1,0 +1,11 @@
+subgraphNodes:
+  filters:
+    - condition:
+        operator: or
+        conditions:
+          - field: type
+            operator: equals
+            value: "Application"
+          - field: type
+            operator: equals
+            value: "Infrastructure"
