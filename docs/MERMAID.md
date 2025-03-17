@@ -68,3 +68,21 @@ subgraphNodes:
         operator: equals
         value: "Application"
 ```
+
+## Node Styles
+
+The `nodeStyles` attribute is used to define the Mermaid styles that will be applied to the rendered nodes. The selection of which nodes to apply uses the same syntax as a query. Multiple styles can be applied to the same node but this behavior is non-deterministic and therefore should be avoided.  There are multiple attributes that can be set for a node style which each match the attributes that can be set in Mermaid for the class definition.
+
+- `fill` - The fill color of the node in RGB hex format.
+
+```yaml
+nodeStyles:
+  - style:
+      filters:
+        - condition:
+            field: type
+            operator: equals
+            value: "Application"
+      style:
+        fill: "#f9f9f9"
+```

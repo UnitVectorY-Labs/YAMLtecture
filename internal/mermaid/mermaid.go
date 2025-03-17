@@ -18,6 +18,19 @@ type Mermaid struct {
 	NodeLabel string `yaml:"nodeLabel"`
 	// The query to identify nodes to treat as subgraphs (explicit containers)
 	SubgraphNodes query.Nodes `yaml:"subgraphNodes,omitempty"`
+	// The style to apply to nodes
+	NodeStyle []NodeStyle `yaml:"nodeStyles,omitempty"`
+}
+
+type NodeStyle struct {
+	// The query to identify nodes to format with the style
+	Filters []query.Filter `yaml:"filters"`
+	// The style to apply to the nodes
+	Format NodeStyleFormat `yaml:"format"`
+}
+
+type NodeStyleFormat struct {
+	Fill string `yaml:"fill,omitempty"`
 }
 
 // SubgraphContainer holds a subgraph’s details, its nested explicit subgraphs,
@@ -37,6 +50,37 @@ func GenerateMermaid(config *configuration.Config, setting *Mermaid) (string, er
 
 	// Write the header.
 	mermaid.WriteString(fmt.Sprintf("flowchart %s\n", setting.Direction))
+
+	// Write the node styles.
+	styleMap := make(map[string][]string)
+	if len(setting.NodeStyle) > 0 {
+		mermaid.WriteString("    %% Node Styles\n")
+		for i, style := range setting.NodeStyle {
+			styleClassName := fmt.Sprintf("style%d", i)
+
+			syntheticQuery := query.Query{
+				Nodes: query.Nodes{
+					Filters: style.Filters,
+				},
+			}
+
+			// TODO: Get the nodes that need this style applied, we need to append those later but need to save them here
+			nodes, err := query.ExecuteQuery(&syntheticQuery, config)
+			if err != nil {
+				return "", fmt.Errorf("error executing subgraph query: %v", err)
+			}
+
+			for _, node := range nodes.Nodes {
+				styleMap[styleClassName] = append(styleMap[styleClassName], node.ID)
+			}
+
+			mermaid.WriteString(style.Format.print(styleClassName))
+			mermaid.WriteString("\n")
+		}
+
+		mermaid.WriteString("\n")
+	}
+
 	mermaid.WriteString("    %% Nodes\n")
 
 	// Build a lookup for nodes and a parent map.
@@ -178,6 +222,15 @@ func GenerateMermaid(config *configuration.Config, setting *Mermaid) (string, er
 		mermaid.WriteString(fmt.Sprintf("    %s\n", nid))
 	}
 
+	// Output the classes to format the nodes
+	if len(styleMap) > 0 {
+		mermaid.WriteString("\n")
+		mermaid.WriteString("    %% Node Styles\n")
+		for nodeID, styles := range styleMap {
+			mermaid.WriteString(fmt.Sprintf("    class %s %s\n", strings.Join(styles, ","), nodeID))
+		}
+	}
+
 	// Output the links.
 	mermaid.WriteString("\n")
 	mermaid.WriteString("    %% Links\n")
@@ -193,4 +246,16 @@ func GenerateMermaid(config *configuration.Config, setting *Mermaid) (string, er
 	}
 
 	return mermaid.String(), nil
+}
+
+func (f NodeStyleFormat) print(name string) string {
+	var style strings.Builder
+
+	style.WriteString("    classDef ")
+	style.WriteString(name)
+	style.WriteString(" ")
+	if f.Fill != "" {
+		style.WriteString(fmt.Sprintf("fill:%s;", f.Fill))
+	}
+	return style.String()
 }

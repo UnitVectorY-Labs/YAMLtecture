@@ -1,0 +1,20 @@
+flowchart TD
+    %% Node Styles
+    classDef style0 fill:#abcabc;
+
+    %% Nodes
+    app_bar
+    app_foo
+    cluster
+    db_bar
+    db_foo
+    service_bar
+    service_foo
+
+    %% Node Styles
+    class service_foo,service_bar style0
+
+    %% Links
+    service_bar -->|DB| db_bar
+    service_foo -->|DB| db_foo
+    service_foo -->|Uses| service_bar

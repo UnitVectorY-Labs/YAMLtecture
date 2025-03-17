@@ -1,0 +1,8 @@
+nodeStyles:
+  - filters:
+      - condition:
+          field: type
+          operator: equals
+          value: "Microservice"
+    format:
+      fill: "#abcabc"
