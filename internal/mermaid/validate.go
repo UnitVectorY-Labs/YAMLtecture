@@ -94,6 +94,38 @@ func (n *NodeStyleFormat) Validate() error {
 		hasAttribute = true
 	}
 
+	// Validate the font size is valid integer suffixed with 'px'
+	err = common.IsValidPixel("font-size", n.FontSize)
+	if err != nil {
+		return err
+	} else {
+		hasAttribute = true
+	}
+
+	// Validate the padding is valid integer suffixed with 'px'
+	err = common.IsValidPixel("padding", n.Padding)
+	if err != nil {
+		return err
+	} else {
+		hasAttribute = true
+	}
+
+	// Validate the rx is valid integer suffixed with 'px'
+	err = common.IsValidPixel("rx", n.Rx)
+	if err != nil {
+		return err
+	} else {
+		hasAttribute = true
+	}
+
+	// Validate the ry is valid integer suffixed with 'px'
+	err = common.IsValidPixel("ry", n.Ry)
+	if err != nil {
+		return err
+	} else {
+		hasAttribute = true
+	}
+
 	// Ensure at least one attribute is set
 	if !hasAttribute {
 		return fmt.Errorf("at least one attribute must be set")

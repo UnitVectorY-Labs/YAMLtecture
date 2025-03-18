@@ -1,6 +1,7 @@
 flowchart TD
     %% Node Styles
-    classDef style0 fill:#abcabc,color:#F00000,stroke-width:2px;
+    classDef style0 fill:#abcabc,color:#F00000,stroke-width:2px,font-size:12px,rx:5px;
+    classDef style1 padding:10px,ry:5px;
 
     %% Nodes
     app_bar
@@ -13,6 +14,7 @@ flowchart TD
 
     %% Node Styles
     class service_foo,service_bar style0
+    class db_foo,db_bar style1
 
     %% Links
     service_bar -->|DB| db_bar

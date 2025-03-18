@@ -33,6 +33,10 @@ type NodeStyleFormat struct {
 	Fill        string `yaml:"fill,omitempty"`
 	Color       string `yaml:"color,omitempty"`
 	StrokeWidth string `yaml:"stroke-width,omitempty"`
+	FontSize    string `yaml:"font-size,omitempty"`
+	Padding     string `yaml:"padding,omitempty"`
+	Rx          string `yaml:"rx,omitempty"`
+	Ry          string `yaml:"ry,omitempty"`
 }
 
 // SubgraphContainer holds a subgraph’s details, its nested explicit subgraphs,
@@ -270,6 +274,22 @@ func (f NodeStyleFormat) print(name string) string {
 
 	if f.StrokeWidth != "" {
 		props = append(props, fmt.Sprintf("stroke-width:%s", f.StrokeWidth))
+	}
+
+	if f.FontSize != "" {
+		props = append(props, fmt.Sprintf("font-size:%s", f.FontSize))
+	}
+
+	if f.Padding != "" {
+		props = append(props, fmt.Sprintf("padding:%s", f.Padding))
+	}
+
+	if f.Rx != "" {
+		props = append(props, fmt.Sprintf("rx:%s", f.Rx))
+	}
+
+	if f.Ry != "" {
+		props = append(props, fmt.Sprintf("ry:%s", f.Ry))
 	}
 
 	style.WriteString(strings.Join(props, ","))

@@ -76,6 +76,10 @@ The `nodeStyles` attribute is used to define the Mermaid styles that will be app
 - `fill` - The fill color of the node background in RGB hex format.
 - `color` - The text color of the node in RGB hex format.
 - `stroke-width` - The thickness of the border of the node in pixels.
+- `font-size` - The size of the text in the node in pixels.
+- `padding` - The padding around the text in the node in pixels.
+- `rx` - The x-radius of the node corners in pixels.
+- `ry` - The y-radius of the node corners in pixels.
 
 ```yaml
 nodeStyles:
