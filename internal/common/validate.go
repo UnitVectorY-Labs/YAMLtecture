@@ -28,12 +28,11 @@ func IsValidColor(field string, color string) error {
 	}
 
 	// Validate the color is valid
-	if color != "" {
-		err := validate.Var(color, "hexcolor")
-		if err != nil {
-			return fmt.Errorf("invalid color for %s: %s", field, color)
-		}
+	err := validate.Var(color, "hexcolor")
+	if err != nil {
+		return fmt.Errorf("invalid color for %s: %s", field, color)
 	}
+
 	return nil
 }
 
@@ -43,11 +42,10 @@ func IsValidPixel(field string, value string) error {
 	}
 
 	// Validate the stroke width is valid integer suffixed with 'px'
-	if value != "" {
-		err := validate.Var(value, "pixel")
-		if err != nil {
-			return fmt.Errorf("invalid pixel for %s: %s", field, value)
-		}
+	err := validate.Var(value, "pixel")
+	if err != nil {
+		return fmt.Errorf("invalid pixel for %s: %s", field, value)
 	}
+
 	return nil
 }
