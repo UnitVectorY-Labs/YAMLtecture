@@ -50,7 +50,8 @@ type LinkStyle struct {
 }
 
 type LinkStyleFormat struct {
-	Stroke string `yaml:"stroke,omitempty"`
+	Stroke      string `yaml:"stroke,omitempty"`
+	StrokeWidth string `yaml:"stroke-width,omitempty"`
 }
 
 // SubgraphContainer holds a subgraph’s details, its nested explicit subgraphs,
@@ -322,6 +323,10 @@ func (l LinkStyleFormat) print(indices []int) string {
 
 	if l.Stroke != "" {
 		props = append(props, fmt.Sprintf("stroke:%s", l.Stroke))
+	}
+
+	if l.StrokeWidth != "" {
+		props = append(props, fmt.Sprintf("stroke-width:%s", l.StrokeWidth))
 	}
 
 	style.WriteString(strings.Join(props, ","))

@@ -6,3 +6,4 @@ linkStyles:
           value: "DB"
     format:
       stroke: "#f00000"
+      stroke-width: 2px

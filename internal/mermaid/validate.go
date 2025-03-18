@@ -173,6 +173,14 @@ func (l *LinkStyleFormat) Validate() error {
 		hasAttribute = true
 	}
 
+	// Validate the stroke width is valid integer suffixed with 'px'
+	err = common.IsValidPixel("stroke-width", l.StrokeWidth)
+	if err != nil {
+		return err
+	} else {
+		hasAttribute = true
+	}
+
 	// Ensure at least one attribute is set
 	if !hasAttribute {
 		return fmt.Errorf("at least one attribute must be set")
