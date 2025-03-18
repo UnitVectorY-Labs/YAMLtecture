@@ -1,0 +1,17 @@
+flowchart TD
+    %% Nodes
+    app_bar
+    app_foo
+    cluster
+    db_bar
+    db_foo
+    service_bar
+    service_foo
+
+    %% Links
+    service_bar -->|DB| db_bar
+    service_foo -->|DB| db_foo
+    service_foo -->|Uses| service_bar
+
+    %% Link Styles
+    linkStyle 0,1 stroke:#f00000,stroke-width:2px

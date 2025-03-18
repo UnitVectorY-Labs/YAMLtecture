@@ -1,0 +1,20 @@
+nodeStyles:
+  - filters:
+      - condition:
+          field: type
+          operator: equals
+          value: "Microservice"
+    format:
+      fill: "#abcabc"
+      color: "#F00000"
+      stroke-width: 2px
+      font-size: 12px
+      rx: 5px
+  - filters:
+      - condition:
+          field: type
+          operator: equals
+          value: "Database"
+    format:
+      padding: 10px
+      ry: 5px

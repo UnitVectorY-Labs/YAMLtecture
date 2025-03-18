@@ -5,6 +5,7 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/google/uuid"
 	"gopkg.in/yaml.v3"
 )
 
@@ -20,6 +21,11 @@ func ParseYAML(config string) (*Config, error) {
 	err := yaml.Unmarshal([]byte(config), c)
 	if err != nil {
 		return nil, fmt.Errorf("error unmarshalling YAML: %v", err)
+	}
+
+	// Loop through the links setting the ID to a UUID
+	for i := range c.Links {
+		c.Links[i].ID = uuid.New().String()
 	}
 
 	return c, nil

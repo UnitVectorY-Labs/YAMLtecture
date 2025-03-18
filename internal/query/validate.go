@@ -34,7 +34,7 @@ func (nodes *Nodes) Validate() error {
 
 	// Validate the filters
 	for _, filter := range nodes.Filters {
-		err := filter.validate(NodeCondition)
+		err := filter.Validate(NodeCondition)
 		if err != nil {
 			return err
 		}
@@ -48,7 +48,7 @@ func (links *Links) validate() error {
 
 	// Validate the filters
 	for _, filter := range links.Filters {
-		err := filter.validate(LinkCondition)
+		err := filter.Validate(LinkCondition)
 		if err != nil {
 			return err
 		}
@@ -58,7 +58,7 @@ func (links *Links) validate() error {
 }
 
 // Validate checks if the filter is valid.
-func (filter *Filter) validate(filterType int) error {
+func (filter *Filter) Validate(filterType int) error {
 
 	// Validate the condition
 	err := filter.Condition.validate(filterType)
