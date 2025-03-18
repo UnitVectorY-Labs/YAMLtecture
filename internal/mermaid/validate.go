@@ -5,11 +5,7 @@ import (
 
 	"github.com/UnitVectorY-Labs/YAMLtecture/internal/common"
 	query "github.com/UnitVectorY-Labs/YAMLtecture/internal/query"
-	"github.com/go-playground/validator/v10"
 )
-
-// Create a singleton validator instance
-var validate = validator.New()
 
 // Validate checks if the mermaid is valid.
 func (m *Mermaid) Validate() error {
@@ -71,12 +67,36 @@ func (n *NodeStyle) Validate() error {
 }
 
 func (n *NodeStyleFormat) Validate() error {
+
+	hasAttribute := false
+
 	// Validate the fill is valid
-	if n.Fill != "" {
-		err := validate.Var(n.Fill, "hexcolor")
-		if err != nil {
-			return fmt.Errorf("invalid fill: %s", n.Fill)
-		}
+	err := common.IsValidColor("fill", n.Fill)
+	if err != nil {
+		return err
+	} else {
+		hasAttribute = true
+	}
+
+	// Validate the color is valid
+	err = common.IsValidColor("color", n.Color)
+	if err != nil {
+		return err
+	} else {
+		hasAttribute = true
+	}
+
+	// Validate the stroke width is valid integer suffixed with 'px'
+	err = common.IsValidPixel("stroke-width", n.StrokeWidth)
+	if err != nil {
+		return err
+	} else {
+		hasAttribute = true
+	}
+
+	// Ensure at least one attribute is set
+	if !hasAttribute {
+		return fmt.Errorf("at least one attribute must be set")
 	}
 
 	return nil

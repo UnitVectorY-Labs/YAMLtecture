@@ -6,3 +6,5 @@ nodeStyles:
           value: "Microservice"
     format:
       fill: "#abcabc"
+      color: "#F00000"
+      stroke-width: 2px
