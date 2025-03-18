@@ -20,6 +20,8 @@ type Mermaid struct {
 	SubgraphNodes query.Nodes `yaml:"subgraphNodes,omitempty"`
 	// The style to apply to nodes
 	NodeStyle []NodeStyle `yaml:"nodeStyles,omitempty"`
+	// The style to apply to links
+	LinkStyle []LinkStyle `yaml:"linkStyles,omitempty"`
 }
 
 type NodeStyle struct {
@@ -27,6 +29,7 @@ type NodeStyle struct {
 	Filters []query.Filter `yaml:"filters"`
 	// The style to apply to the nodes
 	Format NodeStyleFormat `yaml:"format"`
+	// The style to apply to the links
 }
 
 type NodeStyleFormat struct {
@@ -37,6 +40,17 @@ type NodeStyleFormat struct {
 	Padding     string `yaml:"padding,omitempty"`
 	Rx          string `yaml:"rx,omitempty"`
 	Ry          string `yaml:"ry,omitempty"`
+}
+
+type LinkStyle struct {
+	// The query to identify links to format with the style
+	Filters []query.Filter `yaml:"filters"`
+	// The style to apply to the links
+	Format LinkStyleFormat `yaml:"format"`
+}
+
+type LinkStyleFormat struct {
+	Stroke string `yaml:"stroke,omitempty"`
 }
 
 // SubgraphContainer holds a subgraph’s details, its nested explicit subgraphs,
@@ -246,12 +260,73 @@ func GenerateMermaid(config *configuration.Config, setting *Mermaid) (string, er
 		}
 		return config.Links[i].Source < config.Links[j].Source
 	})
-	for _, rel := range config.Links {
+
+	idMap := make(map[int]string)
+	for i, rel := range config.Links {
 		line := fmt.Sprintf("    %s -->|%s| %s\n", rel.Source, rel.Type, rel.Target)
 		mermaid.WriteString(line)
+		idMap[i] = rel.ID
+	}
+
+	// Write the link styles.
+	if len(setting.LinkStyle) > 0 {
+		mermaid.WriteString("\n")
+		mermaid.WriteString("    %% Link Styles\n")
+		for _, style := range setting.LinkStyle {
+
+			syntheticQuery := query.Query{
+				Links: query.Links{
+					Filters: style.Filters,
+				},
+			}
+
+			links, err := query.ExecuteQuery(&syntheticQuery, config)
+			if err != nil {
+				return "", fmt.Errorf("error executing subgraph query: %v", err)
+			}
+
+			// Get the IDs of the links that need this style applied
+			linkIndices := []int{}
+			for j, link := range config.Links {
+				for _, l := range links.Links {
+					if l.ID == link.ID {
+						linkIndices = append(linkIndices, j)
+					}
+				}
+			}
+
+			mermaid.WriteString(style.Format.print(linkIndices))
+			mermaid.WriteString("\n")
+
+		}
 	}
 
 	return mermaid.String(), nil
+}
+
+func (l LinkStyleFormat) print(indices []int) string {
+	var style strings.Builder
+
+	style.WriteString("    linkStyle ")
+
+	// Convert integers to strings and join with commas
+	strIndices := make([]string, len(indices))
+	for i, idx := range indices {
+		strIndices[i] = fmt.Sprintf("%d", idx)
+	}
+	style.WriteString(strings.Join(strIndices, ","))
+	style.WriteString(" ")
+
+	// array of string for each style
+	props := []string{}
+
+	if l.Stroke != "" {
+		props = append(props, fmt.Sprintf("stroke:%s", l.Stroke))
+	}
+
+	style.WriteString(strings.Join(props, ","))
+
+	return style.String()
 }
 
 func (f NodeStyleFormat) print(name string) string {

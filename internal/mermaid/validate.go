@@ -44,6 +44,14 @@ func (m *Mermaid) Validate() error {
 		}
 	}
 
+	// Validate all of the link styles
+	for _, linkStyle := range m.LinkStyle {
+		err := linkStyle.Validate()
+		if err != nil {
+			return err
+		}
+	}
+
 	return nil
 }
 
@@ -120,6 +128,45 @@ func (n *NodeStyleFormat) Validate() error {
 
 	// Validate the ry is valid integer suffixed with 'px'
 	err = common.IsValidPixel("ry", n.Ry)
+	if err != nil {
+		return err
+	} else {
+		hasAttribute = true
+	}
+
+	// Ensure at least one attribute is set
+	if !hasAttribute {
+		return fmt.Errorf("at least one attribute must be set")
+	}
+
+	return nil
+}
+
+func (l *LinkStyle) Validate() error {
+
+	// Validate the filters are valid
+	for _, filter := range l.Filters {
+		err := filter.Validate(query.LinkCondition)
+		if err != nil {
+			return err
+		}
+	}
+
+	// Validate the format is valid
+	err := l.Format.Validate()
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (l *LinkStyleFormat) Validate() error {
+
+	hasAttribute := false
+
+	// Validate the stroke is valid
+	err := common.IsValidColor("stroke", l.Stroke)
 	if err != nil {
 		return err
 	} else {

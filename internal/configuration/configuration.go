@@ -16,6 +16,7 @@ type Node struct {
 
 // Link represents an interaction between nodes
 type Link struct {
+	ID         string                 `yaml:"-"`
 	Source     string                 `yaml:"source"`
 	Target     string                 `yaml:"target"`
 	Type       string                 `yaml:"type"`

@@ -94,3 +94,21 @@ nodeStyles:
         color: "#000000"
         stroke-width: 2px
 ```
+
+## Link Styles
+
+The `linkStyles` attribute is used to define the Mermaid styles that will be applied to the rendered links. The selection of which links to apply uses the same syntax as a query. Multiple styles can be applied to the same link but this behavior is non-deterministic and therefore should be avoided.  There are multiple attributes that can be set for a link style which each match the attributes that can be set in Mermaid for the class definition.
+
+- `stroke` - The color of the link in RGB hex format.
+
+```yaml
+linkStyles:
+  - style:
+      filters:
+        - condition:
+            field: type
+            operator: equals
+            value: "Application"
+      style:
+        stroke: "#000000"
+```

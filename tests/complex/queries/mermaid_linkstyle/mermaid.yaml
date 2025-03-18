@@ -1,0 +1,8 @@
+linkStyles:
+  - filters:
+      - condition:
+          field: type
+          operator: equals
+          value: "DB"
+    format:
+      stroke: "#f00000"

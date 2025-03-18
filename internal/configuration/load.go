@@ -22,6 +22,11 @@ func ParseYAML(config string) (*Config, error) {
 		return nil, fmt.Errorf("error unmarshalling YAML: %v", err)
 	}
 
+	// Loop through the links setting the ID to a UUID
+	for i := range c.Links {
+		c.Links[i].ID = fmt.Sprintf("link-%d", i)
+	}
+
 	return c, nil
 }
 
