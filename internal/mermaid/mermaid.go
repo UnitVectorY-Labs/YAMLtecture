@@ -247,8 +247,22 @@ func GenerateMermaid(config *configuration.Config, setting *Mermaid) (string, er
 	if len(styleMap) > 0 {
 		mermaid.WriteString("\n")
 		mermaid.WriteString("    %% Node Styles\n")
-		for nodeID, styles := range styleMap {
-			mermaid.WriteString(fmt.Sprintf("    class %s %s\n", strings.Join(styles, ","), nodeID))
+
+		// Get all of the keys for the map
+		keys := make([]string, 0, len(styleMap))
+		for k := range styleMap {
+			keys = append(keys, k)
+		}
+
+		// Sort the keys
+		sort.Strings(keys)
+
+		// Loop through styles in sorted order
+		for _, styleClassName := range keys {
+			// Sort node IDs for consistent output
+			nodeIDs := styleMap[styleClassName]
+			sort.Strings(nodeIDs)
+			mermaid.WriteString(fmt.Sprintf("    class %s %s\n", strings.Join(nodeIDs, ","), styleClassName))
 		}
 	}
 
