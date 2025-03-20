@@ -119,6 +119,27 @@ func linkMatchesFilter(link configuration.Link, filter Filter) (bool, error) {
 		return fieldValue == filter.Condition.Value, nil
 	case "notEquals":
 		return fieldValue != filter.Condition.Value, nil
+	case "exists":
+		switch filter.Condition.Field {
+		case "source":
+			return link.Source != "", nil
+		case "target":
+			return link.Target != "", nil
+		case "type":
+			return link.Type != "", nil
+		default:
+			field := filter.Condition.Field
+
+			// Check in Attributes, if 'attribute.' prefix remove it and look up attribute
+			if len(field) > 10 && field[:10] == "attribute." {
+				field = field[10:]
+			} else {
+				return false, nil
+			}
+
+			_, exists := link.Attributes[field]
+			return exists, nil
+		}
 	case "and":
 		// Check if all conditions are met
 		for _, condition := range filter.Condition.Conditions {

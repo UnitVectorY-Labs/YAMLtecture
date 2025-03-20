@@ -73,6 +73,8 @@ func (filter *Filter) Validate(filterType int) error {
 func (condition *Condition) validate(filterType int) error {
 	var err error
 
+	allowCommand := false
+
 	allowField := false
 	requireField := false
 
@@ -85,32 +87,41 @@ func (condition *Condition) validate(filterType int) error {
 	// Validate the operation is 'equals' using a switch so it is easy to add more operations later
 	switch condition.Operator {
 	case "equals":
+		allowCommand = true
 		requireField = true
 		requireValue = true
 
 	case "notEquals":
+		allowCommand = true
 		requireField = true
 		requireValue = true
 
 	case "exists":
+		allowCommand = true
 		requireField = true
 
 	case "and":
+		allowCommand = true
 		requireCondition = true
 
 	case "or":
+		allowCommand = true
 		requireCondition = true
 
 	case "ancestorOf":
+		allowCommand = filterType == NodeCondition
 		requireValue = true
 
 	case "descendantOf":
+		allowCommand = filterType == NodeCondition
 		requireValue = true
 
 	case "childOf":
+		allowCommand = filterType == NodeCondition
 		requireValue = true
 
 	case "parentOf":
+		allowCommand = filterType == NodeCondition
 		requireValue = true
 
 	default:
@@ -130,7 +141,9 @@ func (condition *Condition) validate(filterType int) error {
 		allowCondition = true
 	}
 
-	if requireField && condition.Field == "" {
+	if !allowCommand {
+		return fmt.Errorf("operator %s is not allowed", condition.Operator)
+	} else if requireField && condition.Field == "" {
 		return fmt.Errorf("field is required")
 	} else if !allowField && condition.Field != "" {
 		return fmt.Errorf("field is not allowed")

@@ -1,0 +1,5 @@
+links:
+  filters:
+    - condition:
+        field: attribute.payload
+        operator: exists
