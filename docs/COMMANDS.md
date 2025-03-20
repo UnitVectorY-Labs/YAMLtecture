@@ -32,7 +32,7 @@ This command will output the validation errors and warnings to the console throu
 
 ## Validate Query
 
-The validate query command, ``--validateQuery`, takes in a query file and runs the validation checks on the query.
+The validate query command, `--validateQuery`, takes in a query file and runs the validation checks on the query.
 
 The inputs are used in the following order of precedence:
 
