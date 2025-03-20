@@ -28,6 +28,47 @@ Each node and link have a required `type` attribute.  The `type` attribute is us
 
 Both nodes and links can have optional attributes.  The attributes are used to provide additional metadata about the node or link as key value pairs.
 
+
+## Node Attributes
+
+A node defines each part of the architecture.
+
+### id
+
+The `id` attribute is the required unique identifier for the node within the configuration used to reference the node in the `parent` attribute and in the `source` and `target` attributes of links.
+
+### type
+
+The `type` attribute is a required attribute the defines the type of the node.  This is the only mandatory attribute for a node that defines the metadata for the node as the intent here is that type would commonly be used for filtering or styling the nodes.
+
+### parent
+
+The `parent` attribute is an optional attribute that defines the parent node of the node.  This is used to define the hierarchy of the nodes as an acyclic graph.  The parent node enables special types of filtering given the tree structure of nodes it enforces.
+
+### attributes
+
+The `attributes` is a key value set of additional metadata for a node where the key is not predefined.  This allows for maximum flexibility in defining the attributes of the node. These attributes can be used for styling or filtering the nodes.
+
+## Link Attributes
+
+A link defines the relationship between two nodes.
+
+### source
+
+The `source` attribute is required and references the `id` of the source node.  This is used to define the source of the link.
+
+### target
+
+The `target` attribute is required and references the `id` of the target node.  This is used to define the target of the link.
+
+### type
+
+The `type` attribute is a required attribute the defines the type of the link.  This is the only mandatory attribute for a link that defines the metadata for the link as the intent here is that type would commonly be used for filtering or styling the links.
+
+### attributes
+
+The `attributes` is a key value set of additional metadata for a link where the key is not predefined.  This allows for maximum flexibility in defining the attributes of the link. These attributes can be used for styling or filtering the links.
+
 ## Example Configuration
 
 ```yaml
@@ -56,3 +97,5 @@ links:
     attributes:
       payload: "example"
 ```
+
+
