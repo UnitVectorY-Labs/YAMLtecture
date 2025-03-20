@@ -249,7 +249,7 @@ graph TD;
     classDef green fill:#2ecc71,stroke:#27ae60,stroke-width:2px;
     classDef blue fill:#3498db,stroke:#2980b9,stroke-width:2px;
     classDef red fill:#e74c3c,stroke:#c0392b,stroke-width:2px;
-```. 
+```
 
 ## Link Query Operators
 
