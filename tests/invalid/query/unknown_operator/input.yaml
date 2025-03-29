@@ -1,0 +1,6 @@
+nodes:
+  filters:
+    - condition:
+        field: type
+        operator: invalid_operator
+        value: "Microservice"

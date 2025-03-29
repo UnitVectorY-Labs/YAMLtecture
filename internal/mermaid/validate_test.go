@@ -1,4 +1,4 @@
-package configuration
+package mermaid
 
 import (
 	"os"
@@ -8,16 +8,16 @@ import (
 )
 
 func TestInvalidConfig(t *testing.T) {
-	configDir := "../../tests/invalid/config"
+	mermaidDir := "../../tests/invalid/mermaid"
 
-	entries, err := os.ReadDir(configDir)
+	entries, err := os.ReadDir(mermaidDir)
 	if err != nil {
-		t.Fatalf("Error reading the invalid config directory: %v", err)
+		t.Fatalf("Error reading the invalid mermaid directory: %v", err)
 	}
 
 	for _, entry := range entries {
 		if entry.IsDir() {
-			path := filepath.Join(configDir, entry.Name())
+			path := filepath.Join(mermaidDir, entry.Name())
 
 			t.Run(path, func(t *testing.T) {
 				// Verify the "input.yaml" and "expected_error.txt" files both exist
@@ -31,8 +31,8 @@ func TestInvalidConfig(t *testing.T) {
 					t.Fatalf("expected_error.txt file does not exist in %s", path)
 				}
 
-				// Load the configuration
-				config, err := LoadConfig(inputFile)
+				// Load the mermaid configuration
+				config, err := LoadMermaid(inputFile)
 				if err != nil {
 					t.Fatalf("Failed to load %s: %v", inputFile, err)
 				}
@@ -43,7 +43,7 @@ func TestInvalidConfig(t *testing.T) {
 					t.Fatalf("Expected validation error for %s, but got none", inputFile)
 				}
 
-				actualErrorStr := "YAMLtecture\nError: Error validating configuration\n" + strings.TrimSpace(err.Error())
+				actualErrorStr := "YAMLtecture\nError: Error validating mermaid\n" + strings.TrimSpace(err.Error())
 
 				// Read the expected error message
 				expectedError, err := os.ReadFile(expectedErrorFile)

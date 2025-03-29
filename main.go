@@ -8,6 +8,7 @@ import (
 
 	"golang.org/x/term"
 
+	"github.com/UnitVectorY-Labs/YAMLtecture/internal/common"
 	c "github.com/UnitVectorY-Labs/YAMLtecture/internal/configuration"
 	m "github.com/UnitVectorY-Labs/YAMLtecture/internal/mermaid"
 	q "github.com/UnitVectorY-Labs/YAMLtecture/internal/query"
@@ -47,12 +48,12 @@ func main() {
 
 		config, err := c.ParseYAML(content)
 		if err != nil {
-			printError("Error parsing YAML", err)
+			common.PrintError("Error parsing YAML", err)
 		}
 
 		err = config.Validate()
 		if err != nil {
-			printError("Error validating configuration", err)
+			common.PrintError("Error validating configuration", err)
 		}
 
 	} else if *validateQueryFlag {
@@ -61,28 +62,28 @@ func main() {
 
 		query, err := q.ParseQuery(content)
 		if err != nil {
-			printError("Error loading query", err)
+			common.PrintError("Error loading query", err)
 		}
 
 		err = query.Validate()
 		if err != nil {
-			printError("Error validating query", err)
+			common.PrintError("Error validating query", err)
 		}
 
 	} else if *mergeConfigFlag {
 		// Validate that inFlag was set and is a folder
 		if *inFlag == "" {
-			printError("No input folder specified", nil)
+			common.PrintError("No input folder specified", nil)
 		}
 
 		config, err := c.LoadFolder(*inFlag)
 		if err != nil {
-			printError("Error loading folder", err)
+			common.PrintError("Error loading folder", err)
 		}
 
 		err = config.Validate()
 		if err != nil {
-			printError("Error validating configuration", err)
+			common.PrintError("Error validating configuration", err)
 		}
 
 		writeOutput(config.YamlString(), *outFlag)
@@ -93,12 +94,12 @@ func main() {
 
 		mermaid, err := m.ParseYAML(content)
 		if err != nil {
-			printError("Error parsing YAML", err)
+			common.PrintError("Error parsing YAML", err)
 		}
 
 		err = mermaid.Validate()
 		if err != nil {
-			printError("Error validating mermaid", err)
+			common.PrintError("Error validating mermaid", err)
 		}
 
 	} else if *executeQueryFlag {
@@ -108,27 +109,27 @@ func main() {
 
 		config, err := c.ParseYAML(configContent)
 		if err != nil {
-			printError("Error parsing YAML", err)
+			common.PrintError("Error parsing YAML", err)
 		}
 
 		err = config.Validate()
 		if err != nil {
-			printError("Error validating configuration", err)
+			common.PrintError("Error validating configuration", err)
 		}
 
 		query, err := q.ParseQuery(queryContent)
 		if err != nil {
-			printError("Error loading query", err)
+			common.PrintError("Error loading query", err)
 		}
 
 		err = query.Validate()
 		if err != nil {
-			printError("Error validating query", err)
+			common.PrintError("Error validating query", err)
 		}
 
 		result, err := q.ExecuteQuery(query, config)
 		if err != nil {
-			printError("Error executing query", err)
+			common.PrintError("Error executing query", err)
 		}
 
 		writeOutput(result.YamlString(), *outFlag)
@@ -140,34 +141,34 @@ func main() {
 
 		config, err := c.ParseYAML(queryContent)
 		if err != nil {
-			printError("Error parsing YAML", err)
+			common.PrintError("Error parsing YAML", err)
 		}
 
 		err = config.Validate()
 		if err != nil {
-			printError("Error validating configuration", err)
+			common.PrintError("Error validating configuration", err)
 		}
 
 		mermaid, err := m.ParseYAML(mermaidContent)
 		if err != nil {
-			printError("Error parsing YAML", err)
+			common.PrintError("Error parsing YAML", err)
 		}
 
 		err = mermaid.Validate()
 		if err != nil {
-			printError("Error validating mermaid", err)
+			common.PrintError("Error validating mermaid", err)
 		}
 
 		mermaidDiagram, err := m.GenerateMermaid(config, mermaid)
 		if err != nil {
-			printError("Error generating Mermaid diagram", err)
+			common.PrintError("Error generating Mermaid diagram", err)
 		}
 
 		writeOutput(mermaidDiagram, *outFlag)
 
 	} else {
 		// Write error to error output
-		printError("No command specified", nil)
+		common.PrintError("No command specified", nil)
 	}
 }
 
@@ -176,7 +177,7 @@ func writeOutput(content string, outFlag string) {
 	if outFlag != "" {
 		err := os.WriteFile(outFlag, []byte(content), 0644)
 		if err != nil {
-			printError(fmt.Sprintf("Error writing to file %s", outFlag), err)
+			common.PrintError(fmt.Sprintf("Error writing to file %s", outFlag), err)
 		}
 	} else {
 		fmt.Println(content)
@@ -189,30 +190,30 @@ func readFileContent(specificFlag string, allowGenericFlag bool, genericFlag str
 		// Read from the specific flag first
 		content, err := os.ReadFile(specificFlag)
 		if err != nil {
-			printError(fmt.Sprintf("Error reading file %s", specificFlag), err)
+			common.PrintError(fmt.Sprintf("Error reading file %s", specificFlag), err)
 		}
 		return string(content)
 	} else if allowGenericFlag && genericFlag != "" {
 		content, err := os.ReadFile(genericFlag)
 		if err != nil {
-			printError(fmt.Sprintf("Error reading file %s", genericFlag), err)
+			common.PrintError(fmt.Sprintf("Error reading file %s", genericFlag), err)
 		}
 		return string(content)
 	} else if allowStdin {
 		if !term.IsTerminal(int(os.Stdin.Fd())) {
 			content, err := io.ReadAll(os.Stdin)
 			if err != nil {
-				printError("Error reading from STDIN", err)
+				common.PrintError("Error reading from STDIN", err)
 			}
 			return string(content)
 		} else {
-			printError("No input provided via STDIN", nil)
+			common.PrintError("No input provided via STDIN", nil)
 			return ""
 		}
 	} else if defaultValue != "" {
 		return defaultValue
 	} else {
-		printError("No input file specified and reading from STDIN is not allowed", nil)
+		common.PrintError("No input file specified and reading from STDIN is not allowed", nil)
 		return ""
 	}
 }
@@ -225,17 +226,6 @@ func checkMultipleCommands(commands ...bool) {
 		}
 	}
 	if count > 1 {
-		printError("Multiple commands specified", nil)
+		common.PrintError("Multiple commands specified", nil)
 	}
-}
-
-// printError prints error message to stderr and exits with code 1
-func printError(message string, err error) {
-	fmt.Fprintf(os.Stderr, "YAMLtecture\n")
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error: %s: %v\n", message, err)
-	} else {
-		fmt.Fprintf(os.Stderr, "Error: %s\n", message)
-	}
-	os.Exit(1)
 }

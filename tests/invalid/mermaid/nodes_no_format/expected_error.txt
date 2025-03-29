@@ -1,0 +1,3 @@
+YAMLtecture
+Error: Error validating mermaid
+at least one 'format' attribute must be set
