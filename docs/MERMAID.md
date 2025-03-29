@@ -69,7 +69,7 @@ subgraphNodes:
         value: "Application"
 ```
 
-## Node Styles
+### Node Styles
 
 The `nodeStyles` attribute is used to define the Mermaid styles that will be applied to the rendered nodes. The selection of which nodes to apply uses the same syntax as a query. Multiple styles can be applied to the same node but this behavior is non-deterministic and therefore should be avoided.  There are multiple attributes that can be set for a node style which each match the attributes that can be set in Mermaid for the class definition.
 
@@ -83,19 +83,28 @@ The `nodeStyles` attribute is used to define the Mermaid styles that will be app
 
 ```yaml
 nodeStyles:
-  - style:
-      filters:
-        - condition:
-            field: type
-            operator: equals
-            value: "Application"
-      style:
-        fill: "#f9f9f9"
-        color: "#000000"
-        stroke-width: 2px
+  - filters:
+      - condition:
+          field: type
+          operator: equals
+          value: "Application"
+    format:
+      fill: "#f9f9f9"
+      color: "#000000"
+      stroke-width: 2px
+
+linkStyles:
+  - filters:
+      - condition:
+          field: type
+          operator: equals
+          value: "DB"
+    format:
+      stroke: "#f00000"
+      stroke-width: 2px
 ```
 
-## Link Styles
+### Link Styles
 
 The `linkStyles` attribute is used to define the Mermaid styles that will be applied to the rendered links. The selection of which links to apply uses the same syntax as a query. Multiple styles can be applied to the same link but this behavior is non-deterministic and therefore should be avoided.  There are multiple attributes that can be set for a link style which each match the attributes that can be set in Mermaid for the class definition.
 
@@ -104,13 +113,12 @@ The `linkStyles` attribute is used to define the Mermaid styles that will be app
 
 ```yaml
 linkStyles:
-  - style:
-      filters:
-        - condition:
-            field: type
-            operator: equals
-            value: "Application"
-      style:
-        stroke: "#000000"
-        stroke-width: 2px
+  - filters:
+      - condition:
+          field: type
+          operator: equals
+          value: "Application"
+    format:
+      stroke: "#f00000"
+      stroke-width: 2px
 ```
