@@ -1,0 +1,8 @@
+nodeStyles:
+  - filters:
+      - condition:
+          operator: invalid_op # Invalid query operator
+          field: type
+          value: "Database"
+    format:
+      fill: "#f9f9f9"

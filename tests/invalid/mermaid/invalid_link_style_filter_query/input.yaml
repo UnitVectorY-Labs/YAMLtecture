@@ -1,0 +1,8 @@
+linkStyles:
+  - filters:
+      - condition:
+          operator: invalid_op # Invalid query operator
+          field: type
+          value: "API"
+    format:
+      stroke: "#f00000"

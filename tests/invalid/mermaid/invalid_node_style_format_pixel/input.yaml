@@ -1,0 +1,8 @@
+nodeStyles:
+  - filters:
+      - condition:
+          field: type
+          operator: equals
+          value: "Database"
+    format:
+      stroke-width: "2em" # Invalid pixel value

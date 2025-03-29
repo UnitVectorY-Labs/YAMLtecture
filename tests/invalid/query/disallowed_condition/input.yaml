@@ -1,0 +1,9 @@
+nodes:
+  filters:
+    - condition:
+        operator: equals # Does not allow conditions
+        field: type
+        value: "Microservice"
+        conditions:
+          - field: attribute.name
+            operator: exists

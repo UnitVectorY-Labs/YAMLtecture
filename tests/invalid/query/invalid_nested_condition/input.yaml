@@ -1,0 +1,10 @@
+nodes:
+  filters:
+    - condition:
+        operator: and
+        conditions:
+          - field: type
+            operator: equals
+            value: "Microservice"
+          - operator: equals # Nested condition requires field
+            value: "Java"

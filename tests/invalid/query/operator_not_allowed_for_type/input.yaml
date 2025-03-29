@@ -1,0 +1,6 @@
+# parentOf is only allowed for Node filters
+links:
+  filters:
+    - condition:
+        operator: parentOf
+        value: "some_node"

@@ -1,0 +1,6 @@
+nodes:
+  filters:
+    - condition:
+        operator: ancestorOf # Does not allow field
+        field: type
+        value: "some_node"

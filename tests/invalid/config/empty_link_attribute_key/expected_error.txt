@@ -1,0 +1,3 @@
+YAMLtecture
+Error: Error validating configuration
+link at index 0 is invalid: 'attribute.key' cannot be empty

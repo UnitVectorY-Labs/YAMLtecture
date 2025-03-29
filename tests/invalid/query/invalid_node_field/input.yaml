@@ -1,0 +1,6 @@
+nodes:
+  filters:
+    - condition:
+        operator: equals
+        field: source # Invalid field for Node filters
+        value: "some_source"

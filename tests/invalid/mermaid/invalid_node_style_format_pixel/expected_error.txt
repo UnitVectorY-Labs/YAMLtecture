@@ -1,0 +1,3 @@
+YAMLtecture
+Error: Error validating mermaid
+invalid pixel value for 'stroke-width': '2em'

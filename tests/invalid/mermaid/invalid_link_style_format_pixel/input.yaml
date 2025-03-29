@@ -1,0 +1,8 @@
+linkStyles:
+  - filters:
+      - condition:
+          field: type
+          operator: equals
+          value: "API"
+    format:
+      stroke-width: "thick" # Invalid pixel value

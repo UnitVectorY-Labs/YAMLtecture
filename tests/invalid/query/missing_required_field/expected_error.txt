@@ -1,0 +1,3 @@
+YAMLtecture
+Error: Error validating query
+'field' property is required for operator 'equals'

@@ -1,0 +1,6 @@
+links:
+  filters:
+    - condition:
+        operator: equals
+        field: parent # Invalid field for Link filters
+        value: "some_parent"

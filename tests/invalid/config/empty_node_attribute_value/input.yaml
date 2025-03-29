@@ -1,0 +1,6 @@
+nodes:
+  - id: node_a
+    type: Service
+    attributes:
+      key: "" # Empty Attribute Value
+links: []

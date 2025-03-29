@@ -1,0 +1,4 @@
+nodes:
+  - id: node_a
+    type: "" # Empty Type
+links: []
