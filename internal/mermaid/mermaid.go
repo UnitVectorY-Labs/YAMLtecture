@@ -200,11 +200,15 @@ func GenerateMermaid(config *configuration.Config, setting *Mermaid) (string, er
 	// Recursive helper to output an explicit container.
 	var outputContainer func(cont *subgraphContainer, indent string)
 	outputContainer = func(cont *subgraphContainer, indent string) {
-		mermaid.WriteString(fmt.Sprintf("%ssubgraph %s\n", indent, cont.ID))
-		// If a label is available, output it.
+
+		// Output the label of the subgraph if available
+		subgraphlabel := ""
 		if cont.Label != "" {
-			mermaid.WriteString(fmt.Sprintf("%s    %s\n", indent, cont.Label))
+			subgraphlabel = fmt.Sprintf("[%s]", cont.Label)
 		}
+
+		mermaid.WriteString(fmt.Sprintf("%ssubgraph %s%s\n", indent, cont.ID, subgraphlabel))
+
 		// Output contained non-explicit nodes.
 		sort.Strings(cont.Nodes)
 		for _, nid := range cont.Nodes {
