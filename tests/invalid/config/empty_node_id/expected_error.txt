@@ -1,3 +1,3 @@
 YAMLtecture
 Error: Error validating configuration
-node '' is invalid: node.id cannot be empty
+node '' is invalid: 'node.id' cannot be empty

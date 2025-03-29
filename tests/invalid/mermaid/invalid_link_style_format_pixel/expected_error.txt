@@ -1,3 +1,3 @@
 YAMLtecture
 Error: Error validating mermaid
-invalid pixel for stroke-width: thick
+invalid pixel value for 'stroke-width': 'thick'

@@ -73,6 +73,15 @@ func (filter *Filter) Validate(filterType int) error {
 func (condition *Condition) validate(filterType int) error {
 	var err error
 
+	conditionType := ""
+	if filterType == NodeCondition {
+		conditionType = "nodes"
+	} else if filterType == LinkCondition {
+		conditionType = "links"
+	} else {
+		return fmt.Errorf("invalid filter type: %d", filterType)
+	}
+
 	allowCommand := false
 
 	allowField := false
@@ -125,7 +134,7 @@ func (condition *Condition) validate(filterType int) error {
 		requireValue = true
 
 	default:
-		return fmt.Errorf("invalid operator: %s", condition.Operator)
+		return fmt.Errorf("invalid operator: '%s'", condition.Operator)
 	}
 
 	// Set the allow and require flags based on the filter type
@@ -142,11 +151,11 @@ func (condition *Condition) validate(filterType int) error {
 	}
 
 	if !allowCommand {
-		return fmt.Errorf("operator %s is not allowed", condition.Operator)
+		return fmt.Errorf("operator '%s' is not allowed for %s", condition.Operator, conditionType)
 	} else if requireField && condition.Field == "" {
-		return fmt.Errorf("field is required")
+		return fmt.Errorf("'field' property is required for operator '%s'", condition.Operator)
 	} else if !allowField && condition.Field != "" {
-		return fmt.Errorf("field is not allowed")
+		return fmt.Errorf("'field' property is not allowed for operator '%s'", condition.Operator)
 	} else if allowField {
 		// Validate the field
 		field := condition.Field
@@ -155,19 +164,19 @@ func (condition *Condition) validate(filterType int) error {
 			// Allowed for everything
 		case "id":
 			if filterType != NodeCondition {
-				return fmt.Errorf("field 'id' is not allowed")
+				return fmt.Errorf("field '%s' is not allowed for %s", field, conditionType)
 			}
 		case "parent":
 			if filterType != NodeCondition {
-				return fmt.Errorf("field 'parent' is not allowed")
+				return fmt.Errorf("field '%s' is not allowed for %s", field, conditionType)
 			}
 		case "source":
 			if filterType != LinkCondition {
-				return fmt.Errorf("field 'source' is not allowed")
+				return fmt.Errorf("field '%s' is not allowed for %s", field, conditionType)
 			}
 		case "target":
 			if filterType != LinkCondition {
-				return fmt.Errorf("field 'target' is not allowed")
+				return fmt.Errorf("field '%s' is not allowed for %s", field, conditionType)
 			}
 		default:
 
@@ -179,15 +188,15 @@ func (condition *Condition) validate(filterType int) error {
 					return err
 				}
 			} else {
-				return fmt.Errorf("invalid field: %s", field)
+				return fmt.Errorf("invalid field: '%s'", field)
 			}
 		}
 	}
 
 	if requireValue && condition.Value == "" {
-		return fmt.Errorf("value is required")
+		return fmt.Errorf("'value' property is required for operator '%s'", condition.Operator)
 	} else if !allowValue && condition.Value != "" {
-		return fmt.Errorf("value is not allowed")
+		return fmt.Errorf("'value' property is not allowed for operator '%s'", condition.Operator)
 	} else if allowValue {
 		// Validate the value
 		err = common.IsValidValue(condition.Value, "value")
@@ -197,9 +206,9 @@ func (condition *Condition) validate(filterType int) error {
 	}
 
 	if requireCondition && len(condition.Conditions) == 0 {
-		return fmt.Errorf("condition is required")
+		return fmt.Errorf("'conditions' property is required for operator '%s'", condition.Operator)
 	} else if !allowCondition && len(condition.Conditions) > 0 {
-		return fmt.Errorf("condition is not allowed")
+		return fmt.Errorf("'conditions' property is not allowed for operator '%s'", condition.Operator)
 	} else if allowCondition {
 
 		// Validate the conditions
