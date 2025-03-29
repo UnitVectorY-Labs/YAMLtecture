@@ -1,0 +1,6 @@
+nodes:
+  filters:
+    - condition:
+        operator: exists # Does not allow value
+        field: attribute.name
+        value: "present"

@@ -1,0 +1,5 @@
+nodes:
+  filters:
+    - condition:
+        field: type
+        operator: equals # Requires value

@@ -1,0 +1,7 @@
+nodes:
+  - id: node_b
+    type: Service
+links:
+  - source: node_nonexistent # Non-existent Source
+    target: node_b
+    type: API

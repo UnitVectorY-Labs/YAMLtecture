@@ -1,0 +1,5 @@
+nodes:
+  - id: node_a
+    type: Service
+    parent: node_nonexistent # Non-existent Parent
+links: []

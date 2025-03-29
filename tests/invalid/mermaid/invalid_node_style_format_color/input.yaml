@@ -1,0 +1,8 @@
+nodeStyles:
+  - filters:
+      - condition:
+          field: type
+          operator: equals
+          value: "Database"
+    format:
+      fill: "not_a_color" # Invalid color

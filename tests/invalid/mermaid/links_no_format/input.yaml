@@ -1,0 +1,7 @@
+linkStyles:
+  - filters:
+      - condition:
+          field: type
+          operator: equals
+          value: "Database"
+    # Missing format block

@@ -1,0 +1,9 @@
+nodes:
+  - id: node_a
+    type: Service
+  - id: node_b
+    type: Service
+links:
+  - source: "" # Empty Source
+    target: node_b
+    type: API

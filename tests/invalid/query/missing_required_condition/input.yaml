@@ -1,0 +1,4 @@
+nodes:
+  filters:
+    - condition:
+        operator: and # Requires conditions

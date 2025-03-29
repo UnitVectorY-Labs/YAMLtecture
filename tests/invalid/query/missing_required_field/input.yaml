@@ -1,0 +1,5 @@
+nodes:
+  filters:
+    - condition:
+        operator: equals # Requires field
+        value: "Microservice"
