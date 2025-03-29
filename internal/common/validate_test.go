@@ -13,7 +13,7 @@ func TestIsValidColor(t *testing.T) {
 		expected error
 	}{
 		{"empty_color", "fill", "", nil},
-		{"invalid_hex", "fill", "#12345Q", fmt.Errorf("invalid color for fill: #12345Q")},
+		{"invalid_hex", "fill", "#12345Q", fmt.Errorf("invalid color for 'fill': '#12345Q'")},
 		{"valid_hex", "fill", "#000000", nil},
 	}
 
@@ -39,9 +39,9 @@ func TestIsValidPixel(t *testing.T) {
 		expected error
 	}{
 		{"empty_pixel", "stroke-width", "", nil},
-		{"invalid_pixel", "stroke-width", "1", fmt.Errorf("invalid pixel for stroke-width: 1")},
-		{"invalid_pixel_bad_number", "stroke-width", "apx", fmt.Errorf("invalid pixel for stroke-width: apx")},
-		{"invalid_pixel_no_number", "stroke-width", "px", fmt.Errorf("invalid pixel for stroke-width: px")},
+		{"invalid_pixel", "stroke-width", "1", fmt.Errorf("invalid pixel value for 'stroke-width': '1'")},
+		{"invalid_pixel_bad_number", "stroke-width", "apx", fmt.Errorf("invalid pixel value for 'stroke-width': 'apx'")},
+		{"invalid_pixel_no_number", "stroke-width", "px", fmt.Errorf("invalid pixel value for 'stroke-width': 'px'")},
 		{"valid_pixel", "stroke-width", "1px", nil},
 	}
 

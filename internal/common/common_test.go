@@ -12,7 +12,7 @@ func TestIsValidName(t *testing.T) {
 		field    string
 		expected error
 	}{
-		{"empty_error", "", "Name", fmt.Errorf("Name cannot be empty")},
+		{"empty_error", "", "Name", fmt.Errorf("'Name' cannot be empty")},
 		{"valid_value", "validName", "Name", nil},
 	}
 
@@ -35,7 +35,7 @@ func TestIsValidValue(t *testing.T) {
 		field    string
 		expected error
 	}{
-		{"empty_error", "", "Value", fmt.Errorf("Value cannot be empty")},
+		{"empty_error", "", "Value", fmt.Errorf("'Value' cannot be empty")},
 		{"valid_value", "validValue", "Value", nil},
 	}
 
