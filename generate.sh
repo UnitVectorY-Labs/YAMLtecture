@@ -264,9 +264,9 @@ process_tests_dir() {
     FAILURE=1
     return 1
   fi
-  
-  # Get a list of directories (excluding hidden ones)
-  local dirs=($(find "$example_dir" -maxdepth 1 -mindepth 1 -type d -not -path '*/\.*'))
+
+  # Get a list of directories (excluding hidden ones and the "invalid" directory)
+  local dirs=($(find "$example_dir" -maxdepth 1 -mindepth 1 -type d -not -path '*/\.*' -not -path '*/invalid'))
   local total=${#dirs[@]}
   
   if [ $total -eq 0 ]; then

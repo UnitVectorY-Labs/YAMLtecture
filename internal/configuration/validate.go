@@ -9,12 +9,21 @@ import (
 // ValidateConfig performs all required validations on the configuration.
 func (config *Config) Validate() error {
 
+	// Map for storing node IDs
+	nodeMap := make(map[string]bool)
+
 	// Validate nodes
 	for _, node := range config.Nodes {
 		err := node.validate()
 		if err != nil {
 			return fmt.Errorf("node '%s' is invalid: %w", node.ID, err)
 		}
+
+		// Check for duplicate node IDs
+		if _, exists := nodeMap[node.ID]; exists {
+			return fmt.Errorf("duplicate node ID found: '%s'", node.ID)
+		}
+		nodeMap[node.ID] = true
 	}
 
 	// Validate links

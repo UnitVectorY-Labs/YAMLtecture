@@ -1,0 +1,6 @@
+nodes:
+  - id: node_a
+    type: Service
+  - id: node_a # Duplicate ID
+    type: Database
+links: []
