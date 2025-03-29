@@ -82,7 +82,7 @@ func (n *NodeStyleFormat) Validate() error {
 	err := common.IsValidColor("fill", n.Fill)
 	if err != nil {
 		return err
-	} else {
+	} else if n.Fill != "" {
 		hasAttribute = true
 	}
 
@@ -90,7 +90,7 @@ func (n *NodeStyleFormat) Validate() error {
 	err = common.IsValidColor("color", n.Color)
 	if err != nil {
 		return err
-	} else {
+	} else if n.Color != "" {
 		hasAttribute = true
 	}
 
@@ -98,7 +98,7 @@ func (n *NodeStyleFormat) Validate() error {
 	err = common.IsValidPixel("stroke-width", n.StrokeWidth)
 	if err != nil {
 		return err
-	} else {
+	} else if n.StrokeWidth != "" {
 		hasAttribute = true
 	}
 
@@ -106,7 +106,7 @@ func (n *NodeStyleFormat) Validate() error {
 	err = common.IsValidPixel("font-size", n.FontSize)
 	if err != nil {
 		return err
-	} else {
+	} else if n.FontSize != "" {
 		hasAttribute = true
 	}
 
@@ -114,7 +114,7 @@ func (n *NodeStyleFormat) Validate() error {
 	err = common.IsValidPixel("padding", n.Padding)
 	if err != nil {
 		return err
-	} else {
+	} else if n.Padding != "" {
 		hasAttribute = true
 	}
 
@@ -122,7 +122,7 @@ func (n *NodeStyleFormat) Validate() error {
 	err = common.IsValidPixel("rx", n.Rx)
 	if err != nil {
 		return err
-	} else {
+	} else if n.Rx != "" {
 		hasAttribute = true
 	}
 
@@ -130,13 +130,13 @@ func (n *NodeStyleFormat) Validate() error {
 	err = common.IsValidPixel("ry", n.Ry)
 	if err != nil {
 		return err
-	} else {
+	} else if n.Ry != "" {
 		hasAttribute = true
 	}
 
 	// Ensure at least one attribute is set
 	if !hasAttribute {
-		return fmt.Errorf("at least one attribute must be set")
+		return fmt.Errorf("at least one 'format' attribute must be set")
 	}
 
 	return nil
@@ -169,7 +169,7 @@ func (l *LinkStyleFormat) Validate() error {
 	err := common.IsValidColor("stroke", l.Stroke)
 	if err != nil {
 		return err
-	} else {
+	} else if l.Stroke != "" {
 		hasAttribute = true
 	}
 
@@ -177,13 +177,13 @@ func (l *LinkStyleFormat) Validate() error {
 	err = common.IsValidPixel("stroke-width", l.StrokeWidth)
 	if err != nil {
 		return err
-	} else {
+	} else if l.StrokeWidth != "" {
 		hasAttribute = true
 	}
 
 	// Ensure at least one attribute is set
 	if !hasAttribute {
-		return fmt.Errorf("at least one attribute must be set")
+		return fmt.Errorf("at least one 'format' attribute must be set")
 	}
 
 	return nil
