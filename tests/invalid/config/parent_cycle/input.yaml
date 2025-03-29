@@ -1,0 +1,11 @@
+nodes:
+  - id: node_a
+    type: Service
+    parent: node_b
+  - id: node_b
+    type: Database
+    parent: node_c
+  - id: node_c
+    type: Other
+    parent: node_a # Cycle in parent references
+links: []

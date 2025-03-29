@@ -264,9 +264,9 @@ process_tests_dir() {
     FAILURE=1
     return 1
   fi
-  
-  # Get a list of directories (excluding hidden ones)
-  local dirs=($(find "$example_dir" -maxdepth 1 -mindepth 1 -type d -not -path '*/\.*'))
+
+  # Get a list of directories (excluding hidden ones and the "invalid" directory)
+  local dirs=($(find "$example_dir" -maxdepth 1 -mindepth 1 -type d -not -path '*/\.*' -not -path '*/invalid'))
   local total=${#dirs[@]}
   
   if [ $total -eq 0 ]; then
@@ -284,6 +284,77 @@ process_tests_dir() {
   done
 }
 
+# Process /tests/invalid folders running validate on input.yaml and saving output to expected_error.txt
+process_invalid() {
+  local invalid_dir="tests/invalid"
+  if [ ! -d "$invalid_dir" ]; then
+    echo -e "${RED}Directory 'tests/invalid' does not exist.${NC}"
+    FAILURE=1
+    return 1
+  fi
+
+  # Get a list of category directories (config, mermaid, query)
+  local categories=($(find "$invalid_dir" -maxdepth 1 -mindepth 1 -type d -not -path '*/\.*'))
+  
+  if [ ${#categories[@]} -eq 0 ]; then
+    echo -e "${RED}No invalid test categories found.${NC}"
+    FAILURE=1
+    return 1
+  fi
+  
+  echo "Processing invalid test cases..."
+  
+  for category in "${categories[@]}"; do
+    local category_name=$(basename "$category")
+    echo "Category: $category_name"
+    
+    # Select the correct validation command based on category
+    local validation_command=""
+    case "$category_name" in
+      "config")
+        validation_command="--validateConfig"
+        ;;
+      "mermaid")
+        validation_command="--validateMermaid"
+        ;;
+      "query")
+        validation_command="--validateQuery"
+        ;;
+      *)
+        echo -e "  ${RED}ERROR: Unknown category '$category_name'.${NC}"
+        FAILURE=1
+        continue
+        ;;
+    esac
+    
+    # Find all input.yaml files recursively in this category
+    local input_files=($(find "$category" -name "input.yaml"))
+    
+    if [ ${#input_files[@]} -eq 0 ]; then
+      echo -e "  ${RED}ERROR: No input.yaml files found in $category_name category.${NC}"
+      FAILURE=1
+      continue
+    fi
+    
+    for input_file in "${input_files[@]}"; do
+      # Get the directory containing the input file
+      local test_dir=$(dirname "$input_file")
+      local test_name=$(basename "$test_dir")
+      local expected_error_file="$test_dir/expected_error.txt"
+      
+      echo "  - $test_name"
+      # We expect this command to fail, so we redirect stderr to the expected_error.txt file
+      ./YAMLtecture $validation_command --${category_name}In="$input_file" 2> "$expected_error_file"
+      
+      # Check if we captured any error output
+      if [ ! -s "$expected_error_file" ]; then
+        echo -e "    ${RED}ERROR: No error output captured. The validation might have unexpectedly passed.${NC}"
+        FAILURE=1
+      fi
+    done
+  done
+}
+
 # Main script execution starts here
 rm -f "$LOG_FILE"
 FAILURE=0
@@ -295,6 +366,13 @@ compile_go_app
 process_tests_dir
 
 # Print final status
+if [ $FAILURE -eq 1 ]; then
+    echo -e "\n${RED}ERROR: One or more operations failed during execution. Check the log file for details.${NC}"
+    exit 1
+fi
+
+# Process the invalid directory
+process_invalid
 if [ $FAILURE -eq 1 ]; then
     echo -e "\n${RED}ERROR: One or more operations failed during execution. Check the log file for details.${NC}"
     exit 1

@@ -1,0 +1,6 @@
+nodeStyles:
+  - filters:
+      - condition:
+          field: type
+          operator: equals
+          value: "Database"
