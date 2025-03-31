@@ -36,7 +36,7 @@ YAMLtecture --configIn=./tests/simple/config.yaml --generateMermaid
 
 Rendering a graph with mermaid can be done on the CLI with [mermaid-cli](https://github.com/mermaid-js/mermaid-cli).
 
-Piping these togeher you can generate and open a graph in a single command:
+By piping these together, you can generate and open a graph in a single command:
 
 ```bash
 rm -f out.png && YAMLtecture -file=./tests/complex/config.yaml -graph | mmdc -i - -o ./out.png && open ./out.png

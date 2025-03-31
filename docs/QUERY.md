@@ -16,11 +16,11 @@ permalink: /query
 
 ---
 
-One core capability of YAMLtecture is the ability to apply a query to a configuration file to filter down to a subset of the nodes and links.  This is useful for taking a single larger definition configuration and applying different queries to filter down to a subset for different use cases.
+One core capability of YAMLtecture is the ability to apply a query to a configuration file to filter down to a subset of the nodes and links. This is useful for taking a single larger definition configuration and applying different queries to filter down to a subset for different use cases.
 
 ## Why Query?
 
-The intended use of a YAMLtecture configuration file is that it represents a superset of the overall system with all of the detail represented.  The challenge this provides is that consuming this at full detail as in creating a mermaid flowchart results in too much detail.  Therefore, this information can be selected down with a query.
+A YAMLtecture configuration file is intended to represent a superset of the overall system, with all its details included. The challenge this provides is that consuming this at full detail as in creating a mermaid flowchart results in too much detail. Therefore, this information can be selected down with a query.
 
 ## Query Syntax
 
@@ -30,7 +30,7 @@ Queries are represented as YAML files and apply filters in the form of various o
 
 Queries applied to nodes are used to select a subset of nodes based on the specified conditions. Links that have a source or target node that is not included in the query will not be included in the output.
 
-The node query is defined by an array of `filters` that are applied to the nodes.  Each filter is defined by a `condition` that has the following attributes:
+The node query is defined by an array of `filters` that are applied to the nodes. Each filter is defined by a `condition` that has the following attributes:
 
 - `field`: The field to be used in the filter for operators that require a field. This can be one of the fields defined below.
 - `operator`: The operator to be used in the filter. This can be one of the operators defined below.
@@ -84,7 +84,7 @@ nodes:
 
 ### Operator: `and`
 
-Filter operation that allows multiple conditions to be combined together.  This is useful for more complex queries.
+Filter operation that allows multiple conditions to be combined together. This is useful for more complex queries.
 
 ```yaml
 nodes:
@@ -102,7 +102,7 @@ nodes:
 
 ### Operator: `or`
 
-Filter operation that allows multiple conditions to be combined together.  This is useful for more complex queries.
+Filter operation that allows multiple conditions to be combined together. This is useful for more complex queries.
 
 ```yaml
 nodes:
@@ -220,7 +220,7 @@ graph TD;
 
 ### Operator: `parentOf`
 
-Filter operation that selects nodes that are parents of the specified node as defined by the `id` field. This includes the direct parent of the node.
+Filter operation that selects the parent of the specified node, as defined by the `id` field. This includes the direct parent of the node.
 
 ```yaml
 nodes:
@@ -255,7 +255,7 @@ graph TD;
 
 Queries applied to links are used to select a subset of links based on the specified conditions. If all links are removed from a node, that node will still be included in the output.
 
-The link query is defined by an array of `filters` that are applied to the links.  Each filter is defined by a `condition` that has the following attributes:
+A link query is defined as an array of `filters` applied to the links. Each filter is defined by a `condition` that has the following attributes:
 
 - `field`: The field to be used in the filter for operators that require a field. This can be one of the fields defined below.
 - `operator`: The operator to be used in the filter. This can be one of the operators defined below.
@@ -311,7 +311,7 @@ links:
 
 ### Operator: `and`
 
-Filter operation that allows multiple conditions to be combined together.  This is useful for more complex queries.
+Filter operation that allows multiple conditions to be combined together. This is useful for more complex queries.
 
 ```yaml
 links:
@@ -329,7 +329,7 @@ links:
 
 ### Operator: `or`
 
-Filter operation that allows multiple conditions to be combined together.  This is useful for more complex queries.
+Filter operation that allows multiple conditions to be combined together. This is useful for more complex queries.
 
 ```yaml
 links:
