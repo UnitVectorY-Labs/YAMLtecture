@@ -34,7 +34,7 @@ go test ./...
 
 ## Generate Tests
 
-Generate the test cases output based on the configuration. The intended use case here is the generated files will pass the test cases and will instead be verified to be correct before being committed to the repository.
+Generate the test cases output based on the configuration. The intended use case is that the generated files should pass the test cases and will be manually verified for correctness before being committed to the repository.
 
 ```bash
 ./generate.sh

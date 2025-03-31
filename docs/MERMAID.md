@@ -32,7 +32,7 @@ An optional setting YAML file can be provided with the `--mermaidIn` flag. This 
 - `nodeLabel` - The attribute to use as the node label
 - `subgraphNodes` - The attribute to filter to identify nodes that will be used as subgraphs
 
-All settings are optional but to generate a configuration file must be specified, even if it is empty.
+All settings are optional, but a configuration file must be specified to generate output—even if it is empty.
 
 ### Direction
 
@@ -71,7 +71,7 @@ subgraphNodes:
 
 ### Node Styles
 
-The `nodeStyles` attribute is used to define the Mermaid styles that will be applied to the rendered nodes. The selection of which nodes to apply uses the same syntax as a query. Multiple styles can be applied to the same node but this behavior is non-deterministic and therefore should be avoided.  There are multiple attributes that can be set for a node style which each match the attributes that can be set in Mermaid for the class definition.
+The `nodeStyles` attribute is used to define the Mermaid styles that will be applied to the rendered nodes. The selection of which nodes to apply uses the same syntax as a query. Multiple styles can be applied to the same node, but this behavior is non-deterministic and should be avoided. There are multiple attributes that can be set for a node style which each match the attributes that can be set in Mermaid for the class definition.
 
 - `fill` - The fill color of the node background in RGB hex format.
 - `color` - The text color of the node in RGB hex format.
@@ -106,7 +106,7 @@ linkStyles:
 
 ### Link Styles
 
-The `linkStyles` attribute is used to define the Mermaid styles that will be applied to the rendered links. The selection of which links to apply uses the same syntax as a query. Multiple styles can be applied to the same link but this behavior is non-deterministic and therefore should be avoided.  There are multiple attributes that can be set for a link style which each match the attributes that can be set in Mermaid for the class definition.
+The `linkStyles` attribute is used to define the Mermaid styles that will be applied to the rendered links. The selection of which links to style uses the same syntax as a query. Multiple styles can be applied to the same link but this behavior is non-deterministic and therefore should be avoided. There are multiple attributes that can be set for a link style which each match the attributes that can be set in Mermaid for the class definition.
 
 - `stroke` - The color of the link in RGB hex format.
 - `stroke-width` - The thickness of the line between nodes in pixels.
