@@ -1,0 +1,11 @@
+links:
+  filters:
+    - condition:
+        operator: or
+        conditions:
+          - field: source
+            operator: equals
+            value: "service_foo"
+          - field: target
+            operator: equals
+            value: "service_foo"
