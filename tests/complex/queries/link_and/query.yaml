@@ -1,0 +1,11 @@
+links:
+  filters:
+    - condition:
+        operator: and
+        conditions:
+          - field: type
+            operator: equals
+            value: "DB"
+          - field: attribute.connection
+            operator: equals
+            value: "native"

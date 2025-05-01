@@ -13,3 +13,5 @@ links:
     - source: service_foo
       target: db_foo
       type: DB
+      attributes:
+        connection: native

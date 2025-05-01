@@ -35,17 +35,7 @@ nodes:
         name: Bar Database
 links:
     - source: service_foo
-      target: service_bar
-      type: Uses
-      attributes:
-        payload: example
-    - source: service_foo
       target: db_foo
       type: DB
       attributes:
         connection: native
-    - source: service_bar
-      target: db_bar
-      type: DB
-      attributes:
-        connection: jdbc
