@@ -3,7 +3,7 @@ module github.com/UnitVectorY-Labs/YAMLtecture
 go 1.24.3 // GOVERSION
 
 require (
-	github.com/UnitVectorY-Labs/yamlequal v0.0.1
+	github.com/UnitVectorY-Labs/yamlequal v0.0.2
 	github.com/go-playground/validator/v10 v10.26.0
 	github.com/google/uuid v1.6.0
 	golang.org/x/term v0.31.0
