@@ -19,7 +19,7 @@ var (
 	inFlag  = flag.String("in", "", "Input file to load")
 	outFlag = flag.String("out", "", "Output file to write")
 
-	// Explicitely set the query and config files
+	// Explicitly set the query and config files
 	configFlag  = flag.String("configIn", "", "Input file for the Config YAML architecture file")
 	queryFlag   = flag.String("queryIn", "", "Input file for the Query YAML architecture file")
 	mermaidFlag = flag.String("mermaidIn", "", "Input file for the Mermaid settings")
