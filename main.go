@@ -36,8 +36,18 @@ var (
 	debugFlag = flag.Bool("debug", false, "Enable debug output")
 )
 
+var Version = "dev" // This will be set by the build systems to the release version
+
 func main() {
+
+	showVersion := flag.Bool("version", false, "Print version")
+
 	flag.Parse()
+
+	if *showVersion {
+		fmt.Println("Version:", Version)
+		return
+	}
 
 	// First determine what we are doing
 	checkMultipleCommands(*validateConfigFlag, *validateQueryFlag, *validateMermaidFlag, *mergeConfigFlag, *executeQueryFlag, *generateMermaidFlag)
