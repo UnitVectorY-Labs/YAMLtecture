@@ -8,6 +8,16 @@ A lightweight CLI tool for generating outputs, including Mermaid diagrams, from 
 
 YAMLtecture is an open-source CLI tool designed for application architects who need a simple yet powerful way to define and visualize system architectures. Using modular YAML files, YAMLtecture helps you map out components, hierarchies, and interactions while keeping everything easy to manage in version control. It allows you to define a comprehensive system configuration and then use queries to extract specific subsets for various use cases. With YAMLtecture, you can transform YAML definitions into diagrams (including Mermaid), keeping your architecture clear, version-controlled, and up to date.
 
+## Releases
+
+All official versions of **YAMLtecture** are published on [GitHub Releases](https://github.com/UnitVectorY-Labs/YAMLtecture/releases). Since this application is written in Go, each release provides pre-compiled executables for macOS, Linux, and Windows—ready to download and run.
+
+Alternatively, if you have Go installed, you can install **YAMLtecture** directly from source using the following command:
+
+```bash
+go install github.com/UnitVectorY-Labs/YAMLtecture@latest
+```
+
 ## Configuration
 
 At the core of YAMLtecture are YAML configuration files that define your system architecture. These files are split into two main sections: nodes and links. The nodes section describes the individual components of your system, while the links section defines how those components interact.
