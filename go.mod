@@ -1,6 +1,6 @@
 module github.com/UnitVectorY-Labs/YAMLtecture
 
-go 1.24.4 // GOVERSION
+go 1.24.5 // GOVERSION
 
 require (
 	github.com/UnitVectorY-Labs/yamlequal v0.0.2
