@@ -16,3 +16,17 @@ commands:
      pull_request: "GITHUB_CLI"
      return_to_original_branch: true
      delete_branch: true
+ - name: "justthedocsversion"
+   targets:
+   - path: "docs/_config.yml"
+     pattern: "^remote_theme: just-the-docs/just-the-docs@(?P<version>.*)$"
+   git:
+     create_branch: true
+     branch_name : "just-the-docs-{{version}}"
+     commit: true
+     commit_message: "Update just-the-docs version to {{version}}"
+     push: true
+     remote: "origin"
+     pull_request: "GITHUB_CLI"
+     return_to_original_branch: true
+     delete_branch: true
