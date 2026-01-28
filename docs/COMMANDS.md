@@ -62,6 +62,18 @@ The only input for this command is the `--in=<folderPath>` flag, which is used t
 
 The output of this command is the resulting config YAML, which is written to STDOUT. If `--out=<filePath>` is specified, the output is written to the specified file instead.
 
+### .yamltectureignore
+
+A `.yamltectureignore` file can be placed in the folder to exclude specific YAML files from being merged. This file uses the same syntax as `.gitignore` files. Each line in the file specifies a pattern for files to ignore.
+
+For example, to ignore a file named `example.yaml`, add the following line to `.yamltectureignore`:
+
+```
+example.yaml
+```
+
+The `.yamltectureignore` file supports standard gitignore patterns including wildcards, negation with `!`, and comments with `#`.
+
 ## Execute Query
 
 The execute query command, `--executeQuery`, takes in both a configuration file and a query file. The validate config and validate query checks are always performed, but the details as for the failure of these checks are not displayed.
