@@ -6,6 +6,7 @@ import (
 	"path/filepath"
 
 	"github.com/google/uuid"
+	ignore "github.com/sabhiram/go-gitignore"
 	"gopkg.in/yaml.v3"
 )
 
@@ -41,6 +42,16 @@ func LoadFolder(folderPath string) (*Config, error) {
 		return nil, fmt.Errorf("folderPath is not a directory")
 	}
 
+	// Check for .yamltectureignore file
+	var ignorer *ignore.GitIgnore
+	ignorePath := filepath.Join(folderPath, ".yamltectureignore")
+	if _, err := os.Stat(ignorePath); err == nil {
+		ignorer, err = ignore.CompileIgnoreFile(ignorePath)
+		if err != nil {
+			return nil, fmt.Errorf("error parsing .yamltectureignore: %v", err)
+		}
+	}
+
 	// Loop through the folder contents loading in all .yaml files with LoadConfig
 	configs := []*Config{}
 	files, err := os.ReadDir(folderPath)
@@ -52,6 +63,10 @@ func LoadFolder(folderPath string) (*Config, error) {
 			continue
 		}
 		if filepath.Ext(file.Name()) == ".yaml" {
+			// Check if the file should be ignored
+			if ignorer != nil && ignorer.MatchesPath(file.Name()) {
+				continue
+			}
 			config, err := LoadConfig(filepath.Join(folderPath, file.Name()))
 			if err != nil {
 				return nil, fmt.Errorf("error loading config file: %v", err)

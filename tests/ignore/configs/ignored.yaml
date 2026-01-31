@@ -1,0 +1,7 @@
+nodes:
+  - id: node_ignored
+    type: Application
+    attributes:
+      name: "Ignored Node"
+
+links:

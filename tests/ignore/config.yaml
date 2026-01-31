@@ -1,0 +1,6 @@
+nodes:
+    - id: node_included
+      type: Application
+      attributes:
+        name: Included Node
+links: []

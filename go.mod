@@ -6,6 +6,7 @@ require (
 	github.com/UnitVectorY-Labs/yamlequal v0.0.3
 	github.com/go-playground/validator/v10 v10.30.1
 	github.com/google/uuid v1.6.0
+	github.com/sabhiram/go-gitignore v0.0.0-20210923224102-525f6e181f06
 	golang.org/x/term v0.39.0
 	gopkg.in/yaml.v3 v3.0.1
 )
