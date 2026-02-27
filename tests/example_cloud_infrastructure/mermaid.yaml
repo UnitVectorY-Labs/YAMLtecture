@@ -1,0 +1,16 @@
+direction: "TD"
+nodeLabel: "name"
+subgraphNodes:
+  filters:
+    - condition:
+        operator: or
+        conditions:
+          - field: type
+            operator: equals
+            value: "Cloud"
+          - field: type
+            operator: equals
+            value: "Network"
+          - field: type
+            operator: equals
+            value: "Subnet"

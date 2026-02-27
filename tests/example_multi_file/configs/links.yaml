@@ -1,0 +1,12 @@
+links:
+  - source: frontend
+    target: backend
+    type: "REST"
+    attributes:
+      protocol: "HTTPS"
+  - source: backend
+    target: cache
+    type: "Cache"
+  - source: backend
+    target: primary_db
+    type: "DB"

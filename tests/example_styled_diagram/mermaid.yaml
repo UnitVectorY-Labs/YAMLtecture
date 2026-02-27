@@ -1,0 +1,45 @@
+direction: "TD"
+nodeLabel: "name"
+subgraphNodes:
+  filters:
+    - condition:
+        field: type
+        operator: equals
+        value: "Platform"
+nodeStyles:
+  - filters:
+      - condition:
+          field: type
+          operator: equals
+          value: "Application"
+    format:
+      fill: "#d4edda"
+      color: "#155724"
+      stroke-width: 2px
+  - filters:
+      - condition:
+          field: type
+          operator: equals
+          value: "Service"
+    format:
+      fill: "#cce5ff"
+      color: "#004085"
+      stroke-width: 2px
+  - filters:
+      - condition:
+          field: type
+          operator: equals
+          value: "Database"
+    format:
+      fill: "#fff3cd"
+      color: "#856404"
+      stroke-width: 2px
+linkStyles:
+  - filters:
+      - condition:
+          field: type
+          operator: equals
+          value: "DB"
+    format:
+      stroke: "#856404"
+      stroke-width: 2px

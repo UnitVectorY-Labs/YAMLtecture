@@ -1,0 +1,11 @@
+nodes:
+  - id: frontend
+    type: Service
+    attributes:
+      name: "Frontend App"
+      language: "TypeScript"
+  - id: backend
+    type: Service
+    attributes:
+      name: "Backend API"
+      language: "Go"

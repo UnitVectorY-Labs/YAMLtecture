@@ -1,0 +1,9 @@
+# Local Ruby/Jekyll docs preview artifacts
+Gemfile
+Gemfile.lock
+.bundle/
+_site/
+.jekyll-cache/
+.jekyll-metadata
+.sass-cache/
+vendor/bundle/

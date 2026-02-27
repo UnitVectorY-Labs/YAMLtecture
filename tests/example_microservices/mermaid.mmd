@@ -1,0 +1,14 @@
+flowchart LR
+    %% Nodes
+    gateway[API Gateway]
+    order_db[Order Database]
+    order_service[Order Service]
+    user_db[User Database]
+    user_service[User Service]
+
+    %% Links
+    gateway -->|REST| order_service
+    gateway -->|REST| user_service
+    order_service -->|DB| order_db
+    order_service -->|gRPC| user_service
+    user_service -->|DB| user_db

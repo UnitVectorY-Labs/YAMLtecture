@@ -1,0 +1,48 @@
+nodes:
+  - id: gateway
+    type: Gateway
+    attributes:
+      name: "API Gateway"
+  - id: user_service
+    type: Microservice
+    attributes:
+      name: "User Service"
+      language: "Python"
+  - id: order_service
+    type: Microservice
+    attributes:
+      name: "Order Service"
+      language: "Java"
+  - id: user_db
+    type: Database
+    attributes:
+      name: "User Database"
+      database: "PostgreSQL"
+  - id: order_db
+    type: Database
+    attributes:
+      name: "Order Database"
+      database: "MongoDB"
+
+links:
+  - source: gateway
+    target: user_service
+    type: "REST"
+    attributes:
+      protocol: "HTTPS"
+  - source: gateway
+    target: order_service
+    type: "REST"
+    attributes:
+      protocol: "HTTPS"
+  - source: user_service
+    target: user_db
+    type: "DB"
+  - source: order_service
+    target: order_db
+    type: "DB"
+  - source: order_service
+    target: user_service
+    type: "gRPC"
+    attributes:
+      protocol: "HTTP/2"

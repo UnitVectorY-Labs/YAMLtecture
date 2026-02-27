@@ -1,0 +1,11 @@
+flowchart LR
+    %% Nodes
+    backend[Backend API]
+    cache[Redis Cache]
+    frontend[Frontend App]
+    primary_db[Primary Database]
+
+    %% Links
+    backend -->|Cache| cache
+    backend -->|DB| primary_db
+    frontend -->|REST| backend

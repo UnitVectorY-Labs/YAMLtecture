@@ -1,0 +1,33 @@
+nodes:
+    - id: cache
+      type: Database
+      attributes:
+        database: Redis
+        name: Redis Cache
+    - id: primary_db
+      type: Database
+      attributes:
+        database: PostgreSQL
+        name: Primary Database
+    - id: frontend
+      type: Service
+      attributes:
+        language: TypeScript
+        name: Frontend App
+    - id: backend
+      type: Service
+      attributes:
+        language: Go
+        name: Backend API
+links:
+    - source: frontend
+      target: backend
+      type: REST
+      attributes:
+        protocol: HTTPS
+    - source: backend
+      target: cache
+      type: Cache
+    - source: backend
+      target: primary_db
+      type: DB

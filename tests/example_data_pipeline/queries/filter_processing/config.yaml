@@ -1,0 +1,13 @@
+nodes:
+    - id: ingestion
+      type: Processing
+      attributes:
+        name: Data Ingestion
+    - id: transform
+      type: Processing
+      attributes:
+        name: Transform
+links:
+    - source: ingestion
+      target: transform
+      type: Queue
