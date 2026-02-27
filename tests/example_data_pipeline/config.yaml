@@ -1,0 +1,42 @@
+nodes:
+  - id: source_api
+    type: Source
+    attributes:
+      name: "REST API Source"
+  - id: source_db
+    type: Source
+    attributes:
+      name: "Database Source"
+  - id: ingestion
+    type: Processing
+    attributes:
+      name: "Data Ingestion"
+  - id: transform
+    type: Processing
+    attributes:
+      name: "Transform"
+  - id: warehouse
+    type: Storage
+    attributes:
+      name: "Data Warehouse"
+  - id: dashboard
+    type: Presentation
+    attributes:
+      name: "Analytics Dashboard"
+
+links:
+  - source: source_api
+    target: ingestion
+    type: "Stream"
+  - source: source_db
+    target: ingestion
+    type: "Batch"
+  - source: ingestion
+    target: transform
+    type: "Queue"
+  - source: transform
+    target: warehouse
+    type: "Load"
+  - source: warehouse
+    target: dashboard
+    type: "Query"

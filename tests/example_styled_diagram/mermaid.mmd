@@ -1,0 +1,32 @@
+flowchart TD
+    %% Node Styles
+    classDef style0 fill:#d4edda,color:#155724,stroke-width:2px;
+    classDef style1 fill:#cce5ff,color:#004085,stroke-width:2px;
+    classDef style2 fill:#fff3cd,color:#856404,stroke-width:2px;
+
+    %% Nodes
+    subgraph platform[E-Commerce Platform]
+        api_gateway[API Gateway]
+        cart_service[Cart Service]
+        mobile_app[Mobile Application]
+        product_service[Product Service]
+        web_app[Web Application]
+    end
+    cart_db[Cart DB]
+    product_db[Product DB]
+
+    %% Node Styles
+    class mobile_app,web_app style0
+    class api_gateway,cart_service,product_service style1
+    class cart_db,product_db style2
+
+    %% Links
+    api_gateway -->|gRPC| cart_service
+    api_gateway -->|gRPC| product_service
+    cart_service -->|DB| cart_db
+    mobile_app -->|HTTPS| api_gateway
+    product_service -->|DB| product_db
+    web_app -->|HTTPS| api_gateway
+
+    %% Link Styles
+    linkStyle 2,4 stroke:#856404,stroke-width:2px

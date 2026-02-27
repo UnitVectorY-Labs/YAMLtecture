@@ -1,0 +1,15 @@
+flowchart LR
+    %% Nodes
+    dashboard[Analytics Dashboard]
+    ingestion[Data Ingestion]
+    source_api[REST API Source]
+    source_db[Database Source]
+    transform[Transform]
+    warehouse[Data Warehouse]
+
+    %% Links
+    ingestion -->|Queue| transform
+    source_api -->|Stream| ingestion
+    source_db -->|Batch| ingestion
+    transform -->|Load| warehouse
+    warehouse -->|Query| dashboard

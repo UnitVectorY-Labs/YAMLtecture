@@ -1,0 +1,11 @@
+nodes:
+  - id: cache
+    type: Database
+    attributes:
+      name: "Redis Cache"
+      database: "Redis"
+  - id: primary_db
+    type: Database
+    attributes:
+      name: "Primary Database"
+      database: "PostgreSQL"

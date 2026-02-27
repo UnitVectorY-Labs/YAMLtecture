@@ -97,6 +97,105 @@ func TestCLICommands(t *testing.T) {
 			expectedExitCode: 1,
 			expectedOutFile:  "",
 		},
+		// Example: Microservices Architecture
+		{
+			name: "Example microservices validate config",
+			args: []string{
+				"-validateConfig",
+				"-configIn=./tests/example_microservices/config.yaml"},
+			expectedExitCode: 0,
+			expectedOutFile:  "",
+		},
+		{
+			name: "Example microservices generate mermaid",
+			args: []string{
+				"-generateMermaid",
+				"-configIn=./tests/example_microservices/config.yaml",
+				"-mermaidIn=./tests/example_microservices/mermaid.yaml"},
+			expectedExitCode: 0,
+			expectedOutFile:  "./tests/example_microservices/mermaid.mmd",
+		},
+		// Example: Cloud Infrastructure
+		{
+			name: "Example cloud infrastructure validate config",
+			args: []string{
+				"-validateConfig",
+				"-configIn=./tests/example_cloud_infrastructure/config.yaml"},
+			expectedExitCode: 0,
+			expectedOutFile:  "",
+		},
+		{
+			name: "Example cloud infrastructure generate mermaid",
+			args: []string{
+				"-generateMermaid",
+				"-configIn=./tests/example_cloud_infrastructure/config.yaml",
+				"-mermaidIn=./tests/example_cloud_infrastructure/mermaid.yaml"},
+			expectedExitCode: 0,
+			expectedOutFile:  "./tests/example_cloud_infrastructure/mermaid.mmd",
+		},
+		// Example: Data Pipeline
+		{
+			name: "Example data pipeline validate config",
+			args: []string{
+				"-validateConfig",
+				"-configIn=./tests/example_data_pipeline/config.yaml"},
+			expectedExitCode: 0,
+			expectedOutFile:  "",
+		},
+		{
+			name: "Example data pipeline generate mermaid",
+			args: []string{
+				"-generateMermaid",
+				"-configIn=./tests/example_data_pipeline/config.yaml",
+				"-mermaidIn=./tests/example_data_pipeline/mermaid.yaml"},
+			expectedExitCode: 0,
+			expectedOutFile:  "./tests/example_data_pipeline/mermaid.mmd",
+		},
+		{
+			name: "Example data pipeline execute query",
+			args: []string{
+				"-executeQuery",
+				"-configIn=./tests/example_data_pipeline/config.yaml",
+				"-queryIn=./tests/example_data_pipeline/queries/filter_processing/query.yaml"},
+			expectedExitCode: 0,
+			expectedOutFile:  "./tests/example_data_pipeline/queries/filter_processing/config.yaml",
+		},
+		// Example: Multi-File Configuration
+		{
+			name: "Example multi-file merge config",
+			args: []string{
+				"-mergeConfig",
+				"-in=./tests/example_multi_file/configs/"},
+			expectedExitCode: 0,
+			expectedOutFile:  "./tests/example_multi_file/config.yaml",
+		},
+		{
+			name: "Example multi-file generate mermaid",
+			args: []string{
+				"-generateMermaid",
+				"-configIn=./tests/example_multi_file/config.yaml",
+				"-mermaidIn=./tests/example_multi_file/mermaid.yaml"},
+			expectedExitCode: 0,
+			expectedOutFile:  "./tests/example_multi_file/mermaid.mmd",
+		},
+		// Example: Styled Mermaid Diagram
+		{
+			name: "Example styled diagram validate config",
+			args: []string{
+				"-validateConfig",
+				"-configIn=./tests/example_styled_diagram/config.yaml"},
+			expectedExitCode: 0,
+			expectedOutFile:  "",
+		},
+		{
+			name: "Example styled diagram generate mermaid",
+			args: []string{
+				"-generateMermaid",
+				"-configIn=./tests/example_styled_diagram/config.yaml",
+				"-mermaidIn=./tests/example_styled_diagram/mermaid.yaml"},
+			expectedExitCode: 0,
+			expectedOutFile:  "./tests/example_styled_diagram/mermaid.mmd",
+		},
 	}
 
 	// For each test case, run the binary as a subprocess.

@@ -1,0 +1,52 @@
+nodes:
+  - id: cloud
+    type: Cloud
+    attributes:
+      name: "Cloud Platform"
+  - id: vpc
+    type: Network
+    parent: cloud
+    attributes:
+      name: "Production VPC"
+  - id: public_subnet
+    type: Subnet
+    parent: vpc
+    attributes:
+      name: "Public Subnet"
+  - id: private_subnet
+    type: Subnet
+    parent: vpc
+    attributes:
+      name: "Private Subnet"
+  - id: load_balancer
+    type: LoadBalancer
+    parent: public_subnet
+    attributes:
+      name: "Application LB"
+  - id: web_server
+    type: Compute
+    parent: private_subnet
+    attributes:
+      name: "Web Server"
+  - id: app_server
+    type: Compute
+    parent: private_subnet
+    attributes:
+      name: "App Server"
+  - id: database
+    type: Database
+    parent: private_subnet
+    attributes:
+      name: "RDS Database"
+      engine: "PostgreSQL"
+
+links:
+  - source: load_balancer
+    target: web_server
+    type: "HTTP"
+  - source: web_server
+    target: app_server
+    type: "API"
+  - source: app_server
+    target: database
+    type: "DB"

@@ -1,0 +1,60 @@
+nodes:
+  - id: platform
+    type: Platform
+    attributes:
+      name: "E-Commerce Platform"
+  - id: web_app
+    type: Application
+    parent: platform
+    attributes:
+      name: "Web Application"
+  - id: mobile_app
+    type: Application
+    parent: platform
+    attributes:
+      name: "Mobile Application"
+  - id: api_gateway
+    type: Service
+    parent: platform
+    attributes:
+      name: "API Gateway"
+  - id: product_service
+    type: Service
+    parent: platform
+    attributes:
+      name: "Product Service"
+  - id: cart_service
+    type: Service
+    parent: platform
+    attributes:
+      name: "Cart Service"
+  - id: product_db
+    type: Database
+    attributes:
+      name: "Product DB"
+      database: "PostgreSQL"
+  - id: cart_db
+    type: Database
+    attributes:
+      name: "Cart DB"
+      database: "Redis"
+
+links:
+  - source: web_app
+    target: api_gateway
+    type: "HTTPS"
+  - source: mobile_app
+    target: api_gateway
+    type: "HTTPS"
+  - source: api_gateway
+    target: product_service
+    type: "gRPC"
+  - source: api_gateway
+    target: cart_service
+    type: "gRPC"
+  - source: product_service
+    target: product_db
+    type: "DB"
+  - source: cart_service
+    target: cart_db
+    type: "DB"

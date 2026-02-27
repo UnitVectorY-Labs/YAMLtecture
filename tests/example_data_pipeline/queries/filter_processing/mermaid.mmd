@@ -1,0 +1,7 @@
+flowchart LR
+    %% Nodes
+    ingestion[Data Ingestion]
+    transform[Transform]
+
+    %% Links
+    ingestion -->|Queue| transform

@@ -1,0 +1,19 @@
+flowchart TD
+    %% Nodes
+    subgraph cloud[Cloud Platform]
+        subgraph vpc[Production VPC]
+            subgraph private_subnet[Private Subnet]
+                app_server[App Server]
+                database[RDS Database]
+                web_server[Web Server]
+            end
+            subgraph public_subnet[Public Subnet]
+                load_balancer[Application LB]
+            end
+        end
+    end
+
+    %% Links
+    app_server -->|DB| database
+    load_balancer -->|HTTP| web_server
+    web_server -->|API| app_server
