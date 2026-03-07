@@ -1,5 +1,5 @@
-github.com/UnitVectorY-Labs/yamlequal v0.0.3 h1:RV49y9wQ9eqrkIJ0Wf3o8+jNN3BT/5QA40/1tAmRYp4=
-github.com/UnitVectorY-Labs/yamlequal v0.0.3/go.mod h1:CTx9pQWdA+OANe7a7f0QIex580Y8T6pR3Hh/X8dcL2g=
+github.com/UnitVectorY-Labs/yamlequal v0.1.0 h1:TTqKD7FGzLmNB+9pXdRKEzJatPPNPvdpcWoc5m8AyK8=
+github.com/UnitVectorY-Labs/yamlequal v0.1.0/go.mod h1:THMbRoqmOopl2Tqjs7msjZOv7meMPPjienwziRhUEDo=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/gabriel-vasile/mimetype v1.4.12 h1:e9hWvmLYvtp846tLHam2o++qitpguFiYCKbn0w9jyqw=
