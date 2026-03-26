@@ -1,0 +1,12 @@
+name: YAMLtecture
+default_branch: main
+config:
+  description: "A lightweight CLI tool for generating outputs, including Mermaid diagrams, from YAML-defined system architectures."
+  license: MIT
+  language: go
+  release: release-go
+  justfile: true
+  codecov: true
+  docs:
+    enabled: true
+    domain: yamltecture.unitvectorylabs.com

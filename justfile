@@ -1,13 +1,12 @@
 
-# List all available commands
+# Commands for YAMLtecture
 default:
   @just --list
-
-# Build the Go application
+# Build YAMLtecture with Go
 build:
   go build ./...
 
-# Run the Go tests
+# Run tests for YAMLtecture with Go
 test:
   go clean -testcache
   go test ./...

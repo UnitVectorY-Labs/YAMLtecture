@@ -1,5 +1,6 @@
 # https://github.com/UnitVectorY-Labs/repver
 commands:
+
  - name: "goversion"
    params:
    - name: "version"
@@ -14,12 +15,13 @@ commands:
      create_branch: true
      branch_name: "repver/go-v{{version}}"
      commit: true
-     commit_message: "Update Go version to {{version}}"
+     commit_message: "Update Go version to v{{version}}"
      push: true
      remote: "origin"
      pull_request: "GITHUB_CLI"
      return_to_original_branch: true
      delete_branch: true
+
  - name: "justthedocsversion"
    targets:
    - path: "docs/_config.yml"
@@ -28,7 +30,22 @@ commands:
      create_branch: true
      branch_name: "repver/just-the-docs-{{version}}"
      commit: true
-     commit_message: "Update just-the-docs version to {{version}}"
+     commit_message: "Update just-the-docs version to v{{version}}"
+     push: true
+     remote: "origin"
+     pull_request: "GITHUB_CLI"
+     return_to_original_branch: true
+     delete_branch: true
+
+ - name: "mermaidversion"
+   targets:
+   - path: "docs/_config.yml"
+     pattern: "^  version: \"{{.Config.versions.mermaid}}\" # MERMAIDVERSION$"
+   git:
+     create_branch: true
+     branch_name: "repver/mermaid-{{version}}"
+     commit: true
+     commit_message: "Update mermaid version to v{{version}}"
      push: true
      remote: "origin"
      pull_request: "GITHUB_CLI"
