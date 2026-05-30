@@ -8,19 +8,19 @@ import (
 
 // Node represents a system component
 type Node struct {
-	ID         string                 `yaml:"id"`
-	Type       string                 `yaml:"type"`
-	Parent     string                 `yaml:"parent,omitempty"`
-	Attributes map[string]interface{} `yaml:"attributes,omitempty"`
+	ID         string         `yaml:"id"`
+	Type       string         `yaml:"type"`
+	Parent     string         `yaml:"parent,omitempty"`
+	Attributes map[string]any `yaml:"attributes,omitempty"`
 }
 
 // Link represents an interaction between nodes
 type Link struct {
-	ID         string                 `yaml:"-"`
-	Source     string                 `yaml:"source"`
-	Target     string                 `yaml:"target"`
-	Type       string                 `yaml:"type"`
-	Attributes map[string]interface{} `yaml:"attributes,omitempty"`
+	ID         string         `yaml:"-"`
+	Source     string         `yaml:"source"`
+	Target     string         `yaml:"target"`
+	Type       string         `yaml:"type"`
+	Attributes map[string]any `yaml:"attributes,omitempty"`
 }
 
 // Config holds the aggregated architecture

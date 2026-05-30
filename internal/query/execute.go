@@ -2,6 +2,7 @@ package query
 
 import (
 	"fmt"
+	"slices"
 
 	"github.com/UnitVectorY-Labs/YAMLtecture/internal/configuration"
 )
@@ -325,10 +326,8 @@ func isChildOf(nodeID string, targetNodeID string, ctx *ConfigContext) (bool, er
 	}
 
 	// Check if nodeID is a direct child of targetNodeID
-	for _, childID := range ctx.ChildrenMap[targetNodeID] {
-		if childID == nodeID {
-			return true, nil
-		}
+	if slices.Contains(ctx.ChildrenMap[targetNodeID], nodeID) {
+		return true, nil
 	}
 
 	// If we get here, nodeID is not a child of targetNodeID
@@ -365,10 +364,8 @@ func isDescendantOf(nodeID string, targetNodeID string, ctx *ConfigContext) (boo
 	}
 
 	// Check direct children first
-	for _, childID := range children {
-		if childID == nodeID {
-			return true, nil
-		}
+	if slices.Contains(children, nodeID) {
+		return true, nil
 	}
 
 	// If not found in direct children, check deeper descendants
