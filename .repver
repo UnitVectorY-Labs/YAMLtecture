@@ -23,10 +23,13 @@ commands:
      delete_branch: true
 
  - name: "justthedocsversion"
-   targets:
-   - path: "docs/_config.yml"
-     pattern: "^remote_theme: just-the-docs/just-the-docs@(?P<version>.*)$"
-   git:
+    params:
+    - name: "version"
+      pattern: "^v(?P<major>0|[1-9]\\d*)\\.(?P<minor>0|[1-9]\\d*)\\.(?P<patch>0|[1-9]\\d*)$"
+    targets:
+    - path: "docs/_config.yml"
+      pattern: "^remote_theme: just-the-docs/just-the-docs@(?P<version>.*)$"
+    git:
      create_branch: true
      branch_name: "repver/just-the-docs-{{version}}"
      commit: true
@@ -38,10 +41,13 @@ commands:
      delete_branch: true
 
  - name: "mermaidversion"
-   targets:
-   - path: "docs/_config.yml"
-     pattern: "^  version: \"{{.Config.versions.mermaid}}\" # MERMAIDVERSION$"
-   git:
+    params:
+    - name: "version"
+      pattern: "^(?P<major>0|[1-9]\\d*)\\.(?P<minor>0|[1-9]\\d*)\\.(?P<patch>0|[1-9]\\d*)$"
+    targets:
+    - path: "docs/_config.yml"
+      pattern: "^  version: \"(?P<version>[^\"]+)\" # MERMAIDVERSION$"
+    git:
      create_branch: true
      branch_name: "repver/mermaid-{{version}}"
      commit: true
