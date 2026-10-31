@@ -11,7 +11,9 @@ managed_files:
       management: file
     - path: .github/workflows/codeql-go.yml
       management: file
-    - path: .github/workflows/osv-scanner.yml
+    - path: .github/workflows/osv-scanner-full.yml
+      management: file
+    - path: .github/workflows/osv-scanner-pr.yml
       management: file
     - path: .github/workflows/release-go-github.yml
       management: file
