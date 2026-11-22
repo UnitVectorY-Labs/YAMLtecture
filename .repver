@@ -22,18 +22,18 @@ commands:
      return_to_original_branch: true
      delete_branch: true
 
- - name: "justthedocsversion"
+ - name: "uvydocsthemeversion"
    params:
    - name: "version"
      pattern: "^v(?P<major>0|[1-9]\\d*)\\.(?P<minor>0|[1-9]\\d*)\\.(?P<patch>0|[1-9]\\d*)$"
    targets:
    - path: "docs/_config.yml"
-     pattern: "^remote_theme: just-the-docs/just-the-docs@(?P<version>.*)$"
+     pattern: "^remote_theme: UnitVectorY-Labs/uvy-docs-theme@(?P<version>.*)$"
    git:
      create_branch: true
-     branch_name: "repver/just-the-docs-{{version}}"
+     branch_name: "repver/uvy-docs-theme-{{version}}"
      commit: true
-     commit_message: "Update just-the-docs version to v{{version}}"
+     commit_message: "Update uvy-docs-theme version to {{version}}"
      push: true
      remote: "origin"
      pull_request: "GITHUB_CLI"
