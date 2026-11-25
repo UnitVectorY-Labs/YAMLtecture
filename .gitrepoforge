@@ -9,9 +9,6 @@ config:
   justfile: true
   status: active
   release_github: true
-  codecov:
-    enabled: true
-    token: YMO7aAligO
   docs:
     enabled: true
     domain: yamltecture.unitvectorylabs.com
